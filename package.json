@@ -5,8 +5,8 @@
   "scripts": {
     "preinstall": "cd ./client && npm i",
     "install": "cd ./server && npm i",
-    "preprepare": "cd ./client && npm run build",
-    "prepare": "cd ./server && npm run build",
+    "prebuild": "cd ./client && npm run build",
+    "build": "cd ./server && npm run build",
     "start": "cd ./server && npm start"
   },
   "keywords": [],
