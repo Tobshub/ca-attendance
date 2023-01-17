@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "start": "tsc && vite build",
-    "prestart": "npm i",
+    "build": "npm i && tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -28,3 +27,4 @@
     "vite-tsconfig-paths": "^4.0.3"
   }
 }
+
