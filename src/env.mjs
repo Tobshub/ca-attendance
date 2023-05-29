@@ -8,6 +8,7 @@ export const env = createEnv({
    */
   server: {
     DATABASE_URL: z.string().url(),
+    SHADOW_DATABASE_URL: z.string().url(),
     NODE_ENV: z.enum(["development", "test", "production"]),
     JWT_SECRET: z.string(),
     ROOT_USERNAME: z.string(),
@@ -29,6 +30,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
+    SHADOW_DATABASE_URL: process.env.SHADOW_DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     JWT_SECRET: process.env.JWT_SECRET,
     ROOT_USERNAME: process.env.ROOT_USERNAME,
