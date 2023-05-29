@@ -12,7 +12,7 @@ export const NewService = privateProcedure
         data: { date: input.date, name: input.name },
       });
 
-      logger.info("Created new service");
+      logger.info(input, "Created new service");
       return Ok(new_service);
     } catch (err) {
       logger.error(err, "Failed to create service");

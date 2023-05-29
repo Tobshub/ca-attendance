@@ -13,7 +13,7 @@ export const DeleteService = privateProcedure
         select: { id: true },
       });
 
-      logger.info("Deleted serivce", input);
+      logger.info(input, "Deleted serivce");
 
       return Ok(input.id);
     } catch (err) {
