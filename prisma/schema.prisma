@@ -7,36 +7,33 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-model Admin {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  email    String @unique
-  password String
-  name     String
-}
+/// might not have a use for this
+// model Admin {
+//   id       Int    @id @default(autoincrement())
+//   email    String @unique
+//   password String
+//   name     String
+// }
 
 model Member {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  id         Int       @id @default(autoincrement())
   name       String
   phoneNum   String
   address    String?
   sex        Sex
-  present    Service[] @relation(fields: [serviceIds], references: [id])
-  serviceIds String[]  @db.ObjectId
+  present    Service[]
   dateJoined DateTime?
-  createdAt  DateTime  @default(now()) @map("createdAt")
 }
 
 model Service {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  date      DateTime @unique
-  name      String
-  present   Member[] @relation(fields: [memberIds], references: [id])
-  memberIds String[] @db.ObjectId
-  createdAt DateTime @default(now()) @map("createdAt")
+  id      Int      @id @default(autoincrement())
+  date    DateTime @unique
+  name    String
+  present Member[]
 }
 
 enum Sex {

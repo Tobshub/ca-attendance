@@ -11,6 +11,7 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { prisma } from "@/server/db";
+import { AuthToken } from "../utils/token";
 
 /**
  * 1. CONTEXT
@@ -72,6 +73,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
   },
 });
 
+export const tError = TRPCError;
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
  *
@@ -96,9 +98,18 @@ export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 
 const AuthMiddleware = t.middleware(({ ctx, next }) => {
-  return next({ ctx });
+  const token = ctx.auth;
+  if (!token) {
+    throw new tError({ code: "BAD_REQUEST", message: "Token is missing" });
+  }
+
+  const valid = AuthToken.verify(token);
+
+  if (!valid.ok) {
+    throw new tError({ code: "UNAUTHORIZED", message: valid.message });
+  }
+
+  return next({ ctx: { auth: valid.value } });
 });
 
 export const privateProcedure = t.procedure.use(AuthMiddleware);
-
-export const tError = TRPCError;

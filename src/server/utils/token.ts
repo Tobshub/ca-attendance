@@ -5,7 +5,7 @@ import { logger } from "./logger";
 
 const jwtSecret = env.JWT_SECRET;
 
-export const authToken = {
+export const AuthToken = {
   generate: (payload: string) => {
     try {
       const token = jwt.sign(payload, jwtSecret);
