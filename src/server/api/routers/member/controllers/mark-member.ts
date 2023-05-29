@@ -1,13 +1,12 @@
 import { privateProcedure, tError } from "@/server/api/trpc";
-import { logger } from "@/server/utils/logger";
 import { Ok } from "@/server/utils/result";
 import { z } from "zod";
 
 export const MarkMember = privateProcedure
   .input(z.object({ id: z.number(), service_id: z.number() }))
-  .mutation(async ({ input, ctx }) => {
+  .mutation(async ({ input, ctx: { prisma, logger } }) => {
     try {
-      const member = await ctx.prisma.member.update({
+      const member = await prisma.member.update({
         where: { id: input.id },
         data: { present: { connect: { id: input.service_id } } },
       });
@@ -24,9 +23,9 @@ export const MarkMember = privateProcedure
 
 export const UnMarkMember = privateProcedure
   .input(z.object({ id: z.number(), service_id: z.number() }))
-  .mutation(async ({ input, ctx }) => {
+  .mutation(async ({ input, ctx: { prisma, logger } }) => {
     try {
-      const member = await ctx.prisma.member.update({
+      const member = await prisma.member.update({
         where: { id: input.id },
         data: { present: { disconnect: { id: input.service_id } } },
       });

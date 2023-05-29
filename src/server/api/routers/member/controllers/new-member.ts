@@ -1,11 +1,6 @@
 import { privateProcedure, tError } from "@/server/api/trpc";
-import { prisma } from "@/server/db";
-import { logger } from "@/server/utils/logger";
 import { Ok } from "@/server/utils/result";
-import {
-  PrismaClientKnownRequestError,
-  PrismaClientValidationError,
-} from "@prisma/client/runtime";
+import { PrismaClientValidationError } from "@prisma/client/runtime";
 import { z } from "zod";
 
 export const NewMember = privateProcedure
@@ -17,7 +12,7 @@ export const NewMember = privateProcedure
       sex: z.enum(["MALE", "FEMALE"]),
     })
   )
-  .mutation(async ({ input }) => {
+  .mutation(async ({ input, ctx: { prisma, logger } }) => {
     try {
       const new_member = await prisma.member.create({
         data: input,

@@ -1,12 +1,10 @@
 import { privateProcedure, tError } from "@/server/api/trpc";
-import { prisma } from "@/server/db";
-import { logger } from "@/server/utils/logger";
 import { Err, Ok } from "@/server/utils/result";
 import { z } from "zod";
 
 export const GetOneService = privateProcedure
   .input(z.object({ id: z.number().nullish(), date: z.date().nullish() }))
-  .query(async ({ input }) => {
+  .query(async ({ input, ctx: { logger, prisma } }) => {
     if (!input.id && !input.date) {
       throw new tError({
         code: "BAD_REQUEST",

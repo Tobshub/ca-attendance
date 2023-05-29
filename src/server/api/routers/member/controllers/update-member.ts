@@ -1,6 +1,4 @@
 import { privateProcedure, tError } from "@/server/api/trpc";
-import { prisma } from "@/server/db";
-import { logger } from "@/server/utils/logger";
 import { Ok } from "@/server/utils/result";
 import { z } from "zod";
 
@@ -16,7 +14,7 @@ export const UpdateMember = privateProcedure
       }),
     })
   )
-  .mutation(async ({ input }) => {
+  .mutation(async ({ input, ctx: { prisma, logger } }) => {
     try {
       const updated_member = await prisma.member.update({
         where: { id: input.id },

@@ -12,6 +12,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 import { prisma } from "@/server/db";
 import { AuthToken } from "../utils/token";
+import { logger } from "../utils/logger";
 
 /**
  * 1. CONTEXT
@@ -36,6 +37,7 @@ type CreateContextOptions = { auth: string | undefined };
 const createInnerTRPCContext = (_opts: CreateContextOptions) => {
   return {
     prisma,
+    logger,
     ..._opts,
   };
 };

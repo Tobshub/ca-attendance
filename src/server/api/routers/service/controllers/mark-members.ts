@@ -1,12 +1,10 @@
 import { privateProcedure, tError } from "@/server/api/trpc";
-import { prisma } from "@/server/db";
-import { logger } from "@/server/utils/logger";
 import { Err, Ok } from "@/server/utils/result";
 import { z } from "zod";
 
 export const MarkMembersForService = privateProcedure
   .input(z.object({ id: z.number(), members: z.number().array() }))
-  .mutation(async ({ input }) => {
+  .mutation(async ({ input, ctx: { prisma, logger } }) => {
     let full_success = true;
     for (let member_id of input.members) {
       try {
@@ -28,7 +26,7 @@ export const MarkMembersForService = privateProcedure
 
 export const UnMarkMembersForService = privateProcedure
   .input(z.object({ id: z.number(), members: z.number().array() }))
-  .mutation(async ({ input }) => {
+  .mutation(async ({ input, ctx: { prisma, logger } }) => {
     let full_success = true;
     for (let member_id of input.members) {
       try {

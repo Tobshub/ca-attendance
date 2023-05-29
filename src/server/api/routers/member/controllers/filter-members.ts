@@ -1,6 +1,4 @@
 import { privateProcedure, tError } from "@/server/api/trpc";
-import { prisma } from "@/server/db";
-import { logger } from "@/server/utils/logger";
 import { Ok } from "@/server/utils/result";
 import { z } from "zod";
 
@@ -8,7 +6,7 @@ export const FilterMembers = privateProcedure
   .input(
     z.object({ name: z.string().optional(), phoneNum: z.string().optional() })
   )
-  .query(async ({ input }) => {
+  .query(async ({ input, ctx: { prisma, logger } }) => {
     if (!input.name && !input.phoneNum) {
       throw new tError({
         code: "BAD_REQUEST",

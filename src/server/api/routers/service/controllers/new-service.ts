@@ -1,12 +1,10 @@
 import { privateProcedure, tError } from "@/server/api/trpc";
-import { prisma } from "@/server/db";
-import { logger } from "@/server/utils/logger";
 import { Ok } from "@/server/utils/result";
 import { z } from "zod";
 
 export const NewService = privateProcedure
   .input(z.object({ date: z.date(), name: z.string() }))
-  .mutation(async ({ input }) => {
+  .mutation(async ({ input, ctx: {prisma, logger} }) => {
     try {
       const new_service = await prisma.service.create({
         data: { date: input.date, name: input.name },
