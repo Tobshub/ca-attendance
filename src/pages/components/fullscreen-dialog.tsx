@@ -50,7 +50,7 @@ export default function FullScreenDialog({
   const [useMutationState, setUseMutationState] = React.useState(true);
   const dialogFormRef = React.useRef<HTMLFormElement>(null);
   const resetFormBtnRef = React.useRef<HTMLButtonElement>(null);
-  handleClose = () => {
+  const localHandleClose = () => {
     setUseMutationState(false);
     handleClose();
   };
@@ -61,8 +61,8 @@ export default function FullScreenDialog({
     if (form) {
       const formData = new FormData(form);
       const data = {
-        name: `${formData.get("lname")?.toString() ?? ""} ${
-          formData.get("fname")?.toString() ?? ""
+        name: `${formData.get("lname")?.toString()?.trim() ?? ""} ${
+          formData.get("fname")?.toString()?.trim() ?? ""
         }`,
         address: formData.get("address")?.toString(),
         phoneNum: formData.get("phoneNum")?.toString() ?? "",
@@ -95,7 +95,7 @@ export default function FullScreenDialog({
       <Dialog
         fullScreen
         open={open}
-        onClose={handleClose}
+        onClose={localHandleClose}
         TransitionComponent={Transition}
         sx={{ maxWidth: 1000, marginInline: "auto" }}
       >
@@ -104,7 +104,7 @@ export default function FullScreenDialog({
             <IconButton
               edge="start"
               color="inherit"
-              onClick={handleClose}
+              onClick={localHandleClose}
               aria-label="close"
             >
               <CloseIcon />
@@ -118,7 +118,13 @@ export default function FullScreenDialog({
             </Typography>
             <DialogActions>
               <LoadingButton
-                variant={isSuccess ? "contained" : "outlined"}
+                variant={
+                  useMutationState
+                    ? isSuccess
+                      ? "contained"
+                      : "outlined"
+                    : "outlined"
+                }
                 onClick={handleSubmit}
                 isLoading={isLoading}
                 isSuccess={isSuccess}
