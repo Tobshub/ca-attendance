@@ -1,0 +1,12 @@
+.main {
+  max-width: min(90%, 1000px);
+  margin-inline: auto;
+}
+
+.form {
+  width: min(100%, 500px);
+  display: flex;
+  flex-direction: column;
+  align-items: right;
+  gap: 1rem;
+}
