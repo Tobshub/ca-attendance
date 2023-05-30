@@ -9,20 +9,25 @@ if (typeof window !== "undefined") {
 export const ClientToken = {
   set: (value: string) => {
     if (!localStorage) return undefined;
-    // let token = JSON.stringify(value);
-    localStorage.setItem(TOKEN, value);
-    return value;
+    const token = JSON.stringify(value);
+    localStorage.setItem(TOKEN, token);
+    return token;
   },
   get: () => {
     if (!localStorage) return undefined;
-    const token = localStorage.getItem(TOKEN);
-    return token ?? undefined;
+    let token = localStorage.getItem(TOKEN);
+    if (token) {
+      token = JSON.parse(token);
+      return token;
+    }
+    return undefined;
   },
   remove: () => {
     if (!localStorage) return undefined;
-    const token = localStorage.getItem(TOKEN);
+    let token = localStorage.getItem(TOKEN);
     if (token) {
       localStorage.removeItem(TOKEN);
+      token = JSON.parse(token);
       return token;
     } else {
       return undefined;
