@@ -27,7 +27,7 @@ export const GetOneService = privateProcedure
         logger.info(input, "Service found");
         return Ok(service);
       } else {
-        logger.info("Service not found", input);
+        logger.info(input, "Service not found");
         return Err(service);
       }
     } catch (err) {
