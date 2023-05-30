@@ -15,6 +15,7 @@ import { type FormEvent, useState } from "react";
 import { ClientToken } from "@/utils/client-token";
 import { useRouter } from "next/router";
 import { useSearchParams } from "next/navigation";
+import LoadingButton from "../components/loading-btn";
 
 const Login: NextPage = () => {
   const router = useRouter();
@@ -48,7 +49,7 @@ const Login: NextPage = () => {
         <form
           className={styles.form}
           onSubmit={(e) => {
-            handleSubmit(e).catch(_ => null);
+            handleSubmit(e).catch((_) => null);
           }}
         >
           <TextField
@@ -73,29 +74,14 @@ const Login: NextPage = () => {
             label="Show Password"
             labelPlacement="start"
           />
-          <Box sx={{ m: 1, position: "relative", width: "fit-content" }}>
-            <Button
-              variant="contained"
-              type="submit"
-              disabled={loginMut.isLoading}
-              sx={loginMut.isSuccess ? { bgcolor: green[500] } : undefined}
-            >
-              SUBMIT
-            </Button>
-            {loginMut.isLoading && (
-              <CircularProgress
-                size={24}
-                sx={{
-                  color: green[500],
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  marginTop: "-12px",
-                  marginLeft: "-12px",
-                }}
-              />
-            )}
-          </Box>
+          <LoadingButton
+            variant="contained"
+            isLoading={loginMut.isLoading}
+            isError={loginMut.isError}
+            isSuccess={loginMut.isSuccess}
+          >
+            SUBMIT
+          </LoadingButton>
         </form>
       </main>
     </>
