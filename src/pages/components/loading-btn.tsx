@@ -8,7 +8,7 @@ interface LoadingButtonProps {
   isError: boolean;
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void | undefined;
   variant: "contained" | "outlined" | "text";
-  color?: "inherit";
+  color?: "success" | "error" | "inherit" | "primary" | "secondary" | "info" | "warning";
   useMutationState?: boolean | undefined;
 }
 
