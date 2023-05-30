@@ -2,11 +2,14 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure, tError } from "../trpc";
 import { env } from "@/env.mjs";
 import { AuthToken } from "@/server/utils/token";
+import { logger } from "@/server/utils/logger";
+import b from "bcrypt";
 
 export const authRouter = createTRPCRouter({
   login: publicProcedure
     .input(z.object({ username: z.string(), password: z.string() }))
-    .query(({ input }) => {
+    .mutation(({ input }) => {
+      logger.info("User attempting login");
       const valid =
         input.username === env.ROOT_USERNAME &&
         input.password === env.ROOT_PASSWORD;
@@ -14,6 +17,7 @@ export const authRouter = createTRPCRouter({
       if (valid) {
         const token = AuthToken.generate(env.ROOT_USERNAME);
         if (token.ok) {
+          logger.info("User login successful");
           return token;
         } else {
           throw new tError({
@@ -22,6 +26,7 @@ export const authRouter = createTRPCRouter({
           });
         }
       } else {
+        logger.warn("User login failed");
         throw new tError({
           code: "UNAUTHORIZED",
           message: "Username or Password is wrong",
