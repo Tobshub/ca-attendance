@@ -10,7 +10,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   const url = usePathname();
   const router = useRouter();
   useEffect(() => {
-    if (url !== "/auth") {
+    if (url !== "/login") {
       const token = ClientToken.get();
       if (!token) {
         router.push(`/login?cb=${url}`).catch((_) => null);
