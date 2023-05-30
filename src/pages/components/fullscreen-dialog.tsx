@@ -2,17 +2,15 @@ import * as React from "react";
 import styles from "./components.module.css";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
-import Divider from "@mui/material/Divider";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import Slide from "@mui/material/Slide";
-import { TransitionProps } from "@mui/material/transitions";
+import { type TransitionProps } from "@mui/material/transitions";
 import DialogActions from "@mui/material/DialogActions";
 import {
-  Box,
   FormControl,
   InputLabel,
   MenuItem,
@@ -20,16 +18,14 @@ import {
   TextField,
 } from "@mui/material";
 
-const Transition = React.forwardRef(function Transition
-  (
-    props: TransitionProps & {
-      children: React.ReactElement;
-    },
-    ref: React.Ref<unknown>
-  ) {
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement;
+  },
+  ref: React.Ref<unknown>
+) {
   return <Slide direction="up" ref={ref} {...props} />;
-}
-);
+});
 
 interface FullScreenDialogProps {
   open: boolean;
@@ -54,10 +50,12 @@ export default function FullScreenDialog({
     if (form) {
       const formData = new FormData(form);
       const data = {
-        name: `${formData.get("lname")!.toString()} ${formData.get("fname")!.toString()}`,
+        name: `${formData.get("lname")?.toString() ?? ""} ${
+          formData.get("fname")?.toString() ?? ""
+        }`,
         address: formData.get("address")?.toString(),
-        phoneNum: formData.get("phoneNum")!.toString(),
-        sex: formData.get("sex")!.toString() as "MALE" | "FEMALE",
+        phoneNum: formData.get("phoneNum")?.toString() ?? "",
+        sex: (formData.get("sex")?.toString() ?? "MALE") as "MALE" | "FEMALE",
       };
       addMember(data);
     }

@@ -3,7 +3,6 @@ import { createTRPCRouter, publicProcedure, tError } from "../trpc";
 import { env } from "@/env.mjs";
 import { AuthToken } from "@/server/utils/token";
 import { logger } from "@/server/utils/logger";
-import b from "bcrypt";
 
 export const authRouter = createTRPCRouter({
   login: publicProcedure

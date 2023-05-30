@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { green } from "@mui/material/colors";
 import { api } from "@/utils/api";
-import { FormEvent, useState } from "react";
+import { type FormEvent, useState } from "react";
 import { ClientToken } from "@/utils/client-token";
 import { useRouter } from "next/router";
 import { useSearchParams } from "next/navigation";
@@ -24,7 +24,7 @@ const Login: NextPage = () => {
       if (data.ok) {
         ClientToken.set(data.value);
         console.log(goTo);
-        router.push(goTo ?? "/").catch(_ => null);
+        router.push(goTo ?? "/").catch((_) => null);
       }
     },
   });
@@ -45,7 +45,12 @@ const Login: NextPage = () => {
       </Head>
       <main className={styles.main}>
         <h1>Login</h1>
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form
+          className={styles.form}
+          onSubmit={(e) => {
+            handleSubmit(e).catch(_ => null);
+          }}
+        >
           <TextField
             label="Username"
             name="username"

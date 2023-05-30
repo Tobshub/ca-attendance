@@ -11,5 +11,7 @@ interface Err<M, C> {
   readonly cause?: C;
 }
 
-export const Err = <const M, const C = any>(message: M, cause?: C): Err<M, C> =>
-  ({ ok: false, message, cause } as const);
+export const Err = <const M, const C = unknown>(
+  message: M,
+  cause?: C
+): Err<M, C> => ({ ok: false, message, cause } as const);

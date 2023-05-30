@@ -1,4 +1,4 @@
-import { privateProcedure, tError } from "@/server/api/trpc";
+import { privateProcedure } from "@/server/api/trpc";
 import { Err, Ok } from "@/server/utils/result";
 import { z } from "zod";
 
