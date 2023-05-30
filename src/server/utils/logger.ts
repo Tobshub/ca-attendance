@@ -1,6 +1,6 @@
 import pino from "pino";
 
-const LOG = pino({ transport: { target: "pino-pretty" } });
+const LOG = pino();
 
 export const logger = {
   info: <O>(obj: O, msg?: string | undefined, ...args: unknown[]) =>
