@@ -4,16 +4,31 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import FullScreenDialog from "./components/fullscreen-dialog";
 import { useState } from "react";
+import { api } from "@/utils/api";
 
 const Home: NextPage = () => {
   const [addMemberDialogOpen, setAddMemberDialogOpen] = useState(false);
-  const addMember = (data: {
+  const addMemberMut = api.member.new.useMutation({
+    onSuccess: (data) => {
+      if (data.ok) {
+        console.log(data);
+      }
+    },
+    onError: (err) => {
+      console.error(err);
+    },
+  });
+  const addMember = async (data: {
     name: string;
     address?: string;
     phoneNum: string;
     sex: "MALE" | "FEMALE";
   }) => {
-    console.log(data);
+    const success = await addMemberMut
+      .mutateAsync(data)
+      .then((data) => data.ok)
+      .catch((_) => false);
+    return success;
   };
   return (
     <>
@@ -33,6 +48,7 @@ const Home: NextPage = () => {
           open={addMemberDialogOpen}
           handleClose={() => setAddMemberDialogOpen(false)}
           addMember={addMember}
+          mutation={addMemberMut}
         />
       </main>
     </>

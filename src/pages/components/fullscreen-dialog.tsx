@@ -1,6 +1,5 @@
 import * as React from "react";
 import styles from "./components.module.css";
-import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -11,12 +10,15 @@ import Slide from "@mui/material/Slide";
 import { type TransitionProps } from "@mui/material/transitions";
 import DialogActions from "@mui/material/DialogActions";
 import {
+  Alert,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
+  Snackbar,
   TextField,
 } from "@mui/material";
+import LoadingButton from "./loading-btn";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -35,17 +37,26 @@ interface FullScreenDialogProps {
     address?: string;
     phoneNum: string;
     sex: "MALE" | "FEMALE";
-  }) => void;
+  }) => Promise<boolean>;
+  mutation: { isLoading: boolean; isError: boolean; isSuccess: boolean };
 }
 
 export default function FullScreenDialog({
   open,
   handleClose,
   addMember,
+  mutation: { isSuccess, isError, isLoading },
 }: FullScreenDialogProps) {
+  const [useMutationState, setUseMutationState] = React.useState(true);
   const dialogFormRef = React.useRef<HTMLFormElement>(null);
+  const resetFormBtnRef = React.useRef<HTMLButtonElement>(null);
+  handleClose = () => {
+    setUseMutationState(false);
+    handleClose();
+  };
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setUseMutationState(true);
     const form = dialogFormRef.current;
     if (form) {
       const formData = new FormData(form);
@@ -57,16 +68,36 @@ export default function FullScreenDialog({
         phoneNum: formData.get("phoneNum")?.toString() ?? "",
         sex: (formData.get("sex")?.toString() ?? "MALE") as "MALE" | "FEMALE",
       };
-      addMember(data);
+      addMember(data)
+        .then((isSuccess) => {
+          if (isSuccess) {
+            resetFormBtnRef.current?.click();
+          }
+        })
+        .catch((_) => null);
     }
   };
   return (
     <div>
+      <Snackbar
+        open={useMutationState && (isSuccess || isError)}
+        autoHideDuration={5000}
+        onClose={() => setUseMutationState(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      >
+        <Alert
+          onClose={() => setUseMutationState(false)}
+          severity={isSuccess ? "success" : "error"}
+        >
+          {isSuccess ? "New Member Added" : "Failed to add Member"}
+        </Alert>
+      </Snackbar>
       <Dialog
         fullScreen
         open={open}
         onClose={handleClose}
         TransitionComponent={Transition}
+        sx={{ maxWidth: 1000, marginInline: "auto" }}
       >
         <AppBar sx={{ position: "relative" }}>
           <Toolbar sx={{ display: "flex", flexWrap: "wrap" }}>
@@ -86,9 +117,17 @@ export default function FullScreenDialog({
               Add a new Member to the attendance list
             </Typography>
             <DialogActions>
-              <Button variant="outlined" color="inherit" onClick={handleSubmit}>
+              <LoadingButton
+                variant={isSuccess ? "contained" : "outlined"}
+                onClick={handleSubmit}
+                isLoading={isLoading}
+                isSuccess={isSuccess}
+                isError={isError}
+                useMutationState={useMutationState}
+                color="inherit"
+              >
                 Add Member
-              </Button>
+              </LoadingButton>
             </DialogActions>
           </Toolbar>
         </AppBar>
@@ -103,12 +142,14 @@ export default function FullScreenDialog({
             label="First Name"
             name="fname"
             variant="outlined"
+            disabled={isLoading}
           />
           <TextField
             required
             label="Last Name"
             name="lname"
             variant="outlined"
+            disabled={isLoading}
           />
           <TextField
             required
@@ -117,11 +158,27 @@ export default function FullScreenDialog({
             inputMode="numeric"
             type="number"
             variant="outlined"
+            disabled={isLoading}
           />
-          <TextField label="Address" name="address" variant="standard" />
+          <TextField
+            label="Address"
+            name="address"
+            variant="standard"
+            disabled={isLoading}
+          />
+          <button
+            type="reset"
+            ref={resetFormBtnRef}
+            style={{ visibility: "hidden" }}
+          />
           <FormControl sx={{ minWidth: 80 }}>
             <InputLabel>Sex</InputLabel>
-            <Select label="Sex" name="sex" defaultValue={""}>
+            <Select
+              label="Sex"
+              name="sex"
+              defaultValue={""}
+              disabled={isLoading}
+            >
               <MenuItem value="MALE">Male</MenuItem>
               <MenuItem value="FEMALE">Female</MenuItem>
             </Select>
