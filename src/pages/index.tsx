@@ -6,18 +6,11 @@ import FullScreenDialog from "./components/fullscreen-dialog";
 import { useState } from "react";
 import { api } from "@/utils/api";
 
-const Home: NextPage = () => {
+const UseAddMember = (
+  mutationOptions: Parameters<typeof api.member.new.useMutation>[0]
+) => {
   const [addMemberDialogOpen, setAddMemberDialogOpen] = useState(false);
-  const addMemberMut = api.member.new.useMutation({
-    onSuccess: (data) => {
-      if (data.ok) {
-        console.log(data);
-      }
-    },
-    onError: (err) => {
-      console.error(err);
-    },
-  });
+  const addMemberMut = api.member.new.useMutation(mutationOptions);
   const addMember = async (data: {
     name: string;
     address?: string;
@@ -30,6 +23,21 @@ const Home: NextPage = () => {
       .catch((_) => false);
     return success;
   };
+  return {
+    addMemberDialogOpen,
+    setAddMemberDialogOpen,
+    addMemberMut,
+    addMember,
+  };
+};
+
+const Home: NextPage = () => {
+  const {
+    addMemberDialogOpen,
+    setAddMemberDialogOpen,
+    addMemberMut,
+    addMember,
+  } = UseAddMember({});
   return (
     <>
       <Head>
