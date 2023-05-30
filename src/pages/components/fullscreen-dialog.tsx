@@ -20,15 +20,15 @@ import {
   TextField,
 } from "@mui/material";
 
-const Transition = React.forwardRef(
+const Transition = React.forwardRef(function Transition
   (
     props: TransitionProps & {
       children: React.ReactElement;
     },
     ref: React.Ref<unknown>
-  ) => {
-    return <Slide direction="up" ref={ref} {...props} />;
-  }
+  ) {
+  return <Slide direction="up" ref={ref} {...props} />;
+}
 );
 
 interface FullScreenDialogProps {
@@ -54,7 +54,7 @@ export default function FullScreenDialog({
     if (form) {
       const formData = new FormData(form);
       const data = {
-        name: `${formData.get("lname")} ${formData.get("fname")}`,
+        name: `${formData.get("lname")!.toString()} ${formData.get("fname")!.toString()}`,
         address: formData.get("address")?.toString(),
         phoneNum: formData.get("phoneNum")!.toString(),
         sex: formData.get("sex")!.toString() as "MALE" | "FEMALE",

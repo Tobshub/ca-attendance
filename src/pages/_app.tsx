@@ -13,7 +13,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
     if (url !== "/auth") {
       const token = ClientToken.get();
       if (!token) {
-        router.push(`/login?cb=${url}`);
+        router.push(`/login?cb=${url}`).catch(_ => null);
       }
     }
   }, []);

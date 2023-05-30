@@ -6,7 +6,7 @@ export const MarkMembersForService = privateProcedure
   .input(z.object({ id: z.number(), members: z.number().array() }))
   .mutation(async ({ input, ctx: { prisma, logger } }) => {
     let full_success = true;
-    for (let member_id of input.members) {
+    for (const member_id of input.members) {
       try {
         await prisma.service.update({
           where: { id: input.id },
@@ -28,7 +28,7 @@ export const UnMarkMembersForService = privateProcedure
   .input(z.object({ id: z.number(), members: z.number().array() }))
   .mutation(async ({ input, ctx: { prisma, logger } }) => {
     let full_success = true;
-    for (let member_id of input.members) {
+    for (const member_id of input.members) {
       try {
         await prisma.service.update({
           where: { id: input.id },

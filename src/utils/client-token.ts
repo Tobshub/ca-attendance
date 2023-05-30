@@ -15,12 +15,12 @@ export const ClientToken = {
   },
   get: () => {
     if (!localStorage) return undefined;
-    let token = localStorage.getItem(TOKEN);
+    const token = localStorage.getItem(TOKEN);
     return token ?? undefined;
   },
   remove: () => {
     if (!localStorage) return undefined;
-    let token = localStorage.getItem(TOKEN);
+    const token = localStorage.getItem(TOKEN);
     if (token) {
       localStorage.removeItem(TOKEN);
       return token;

@@ -24,7 +24,7 @@ const Login: NextPage = () => {
       if (data.ok) {
         ClientToken.set(data.value);
         console.log(goTo);
-        router.push(goTo ?? "/");
+        router.push(goTo ?? "/").catch(_ => null);
       }
     },
   });
@@ -35,7 +35,6 @@ const Login: NextPage = () => {
       username: formData.get("username") as string,
       password: formData.get("password") as string,
     };
-    console.log(data);
     await loginMut.mutateAsync(data).catch((_) => null);
   };
   const [showPassword, setShowPassword] = useState(false);
