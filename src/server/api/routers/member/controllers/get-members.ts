@@ -7,8 +7,9 @@ export const GetMembers = privateProcedure
   .query(async ({ input, ctx: { prisma, logger } }) => {
     try {
       const members = await prisma.member.findMany({
-        take: 30,
+        // FIXIT: take only 30 a time
         cursor: input.cursor ? { id: input.cursor } : undefined,
+        include: { present: { orderBy: { date: "desc" }, take: 4 } },
       });
       logger.info("Got members");
       return Ok(members);
