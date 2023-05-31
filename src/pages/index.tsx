@@ -2,9 +2,13 @@ import { Button } from "@mui/material";
 import styles from "./index.module.css";
 import { type NextPage } from "next";
 import Head from "next/head";
-import FullScreenDialog from "./components/fullscreen-dialog";
-import { useState } from "react";
+import {
+  AddMemberDialog,
+  CreateServiceDialog,
+} from "./components/fullscreen-dialog";
+import { useMemo, useState } from "react";
 import { api } from "@/utils/api";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 
 const UseAddMember = (
   mutationOptions: Parameters<typeof api.member.new.useMutation>[0]
@@ -38,6 +42,46 @@ const Home: NextPage = () => {
     addMemberMut,
     addMember,
   } = UseAddMember({});
+  const members = api.member.get.useQuery({});
+  const services = api.service.get.useQuery({ limit: 4 });
+  const [service1, service2, service3, service4] = services.data?.value ?? [];
+  const [createServiceDialogOpen, setCreateServiceDialogOpen] = useState(false);
+
+  const createServiceMut = api.service.new.useMutation({
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (err) => {
+      console.error(err);
+    },
+  });
+
+  // prettier-ignore
+  const COLUMNS: GridColDef[] = useMemo(
+    () => [
+      { field: "id", headerName: "N/O" },
+      { field: "name", headerName: "Name", minWidth: 230, sortable: false },
+      {
+        field: "sex",
+        headerName: "Sex",
+        width: 100,
+        valueFormatter: ({ value }) => (value === "MALE" ? "M" : "F"),
+      },
+      { field: "service1",  headerName: service1?.date?.toLocaleDateString("en-GB") ?? "Attendance 1", type: "boolean" },
+      { field: "service2",  headerName: service2?.date?.toLocaleDateString("en-GB") ?? "Attendance 2", type: "boolean" },
+      { field: "service3",  headerName: service3?.date?.toLocaleDateString("en-GB") ?? "Attendance 3", type: "boolean" },
+      { field: "service4",  headerName: service4?.date?.toLocaleDateString("en-GB") ?? "Attendance 4", type: "boolean" },
+    ],
+    []
+  );
+
+  const createService = async (data: { name: string; date: Date }) => {
+    const success = await createServiceMut
+      .mutateAsync(data)
+      .then((data) => data.ok)
+      .catch((_) => false);
+    return success;
+  };
   return (
     <>
       <Head>
@@ -47,16 +91,51 @@ const Home: NextPage = () => {
       </Head>
       <main className={styles.main}>
         <Button
+          sx={{ my: 1, mx: 1 }}
           variant="contained"
           onClick={() => setAddMemberDialogOpen(true)}
         >
           ADD MEMBERS
         </Button>
-        <FullScreenDialog
+        <Button
+          sx={{ my: 1, mx: 1 }}
+          variant="contained"
+          onClick={() => setCreateServiceDialogOpen(true)}
+        >
+          CREATE SERVICE
+        </Button>
+        <AddMemberDialog
           open={addMemberDialogOpen}
           handleClose={() => setAddMemberDialogOpen(false)}
           addMember={addMember}
           mutation={addMemberMut}
+        />
+        <CreateServiceDialog
+          open={createServiceDialogOpen}
+          handleClose={() => setCreateServiceDialogOpen(false)}
+          createService={createService}
+          mutation={createServiceMut}
+        />
+        <DataGrid
+          initialState={{
+            pagination: { paginationModel: { page: 0, pageSize: 30 } },
+          }}
+          pageSizeOptions={[15, 30, 60, 90]}
+          rows={
+            members.data?.value.map((member) => {
+              // prettier-ignore
+              const tx = {
+                  ...member,
+                  service1: service1 ? member.present.includes(service1) : false,
+                  service2: service2 ? member.present.includes(service2) : false,
+                  service3: service3 ? member.present.includes(service3) : false,
+                  service4: service4 ? member.present.includes(service4) : false,
+                };
+              return tx;
+            }) ?? []
+          }
+          columns={COLUMNS}
+          checkboxSelection
         />
       </main>
     </>
