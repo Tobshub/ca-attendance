@@ -3,7 +3,7 @@ import styles from "./login.module.css";
 import Head from "next/head";
 import { FormControlLabel, Switch, TextField } from "@mui/material";
 import { api } from "@/utils/api";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useState, useEffect } from "react";
 import { ClientToken } from "@/utils/client-token";
 import { useRouter } from "next/router";
 import { useSearchParams } from "next/navigation";
@@ -31,6 +31,21 @@ const Login: NextPage = () => {
     await loginMut.mutateAsync(data).catch((_) => null);
   };
   const [showPassword, setShowPassword] = useState(false);
+
+  const authMut = api.auth.verifyToken.useMutation();
+  useEffect(() => {
+    // delete token if invalid
+    const token = ClientToken.get();
+    if (token) {
+      authMut.mutateAsync(token).then(data => {
+        if (data.ok) {
+          router.push(goTo ?? "/").catch(_ => null);
+        } else {
+          ClientToken.remove();
+        }
+      }).catch(_ => null);
+    }
+  }, [])
   return (
     <>
       <Head>
