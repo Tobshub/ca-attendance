@@ -32,4 +32,8 @@ export const authRouter = createTRPCRouter({
         });
       }
     }),
+  verifyToken: publicProcedure.input(z.string()).mutation(({input}) => {
+    const isValid = AuthToken.verify(input);
+    return isValid;
+  })
 });
