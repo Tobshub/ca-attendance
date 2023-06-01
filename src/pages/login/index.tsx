@@ -1,15 +1,7 @@
 import { type NextPage } from "next";
 import styles from "./login.module.css";
 import Head from "next/head";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  FormControlLabel,
-  Switch,
-  TextField,
-} from "@mui/material";
-import { green } from "@mui/material/colors";
+import { FormControlLabel, Switch, TextField } from "@mui/material";
 import { api } from "@/utils/api";
 import { type FormEvent, useState } from "react";
 import { ClientToken } from "@/utils/client-token";
