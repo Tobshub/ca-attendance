@@ -116,7 +116,6 @@ const Home: NextPage = () => {
       const selectedMembers = selectedMembersIndex
         .map((i) => members.data.value[i - 1]?.id)
         .filter((member) => member !== undefined) as number[];
-      console.log(selectedMembers);
       const success = await markMembersMut
         .mutateAsync({ id: serviceId, members: selectedMembers })
         .then((data) => data.ok)
@@ -174,7 +173,16 @@ const Home: NextPage = () => {
               onSubmit={(e) => {
                 e.preventDefault();
                 const formData = new FormData(e.currentTarget);
-                console.log(formData);
+                const data =formData.get("serviceId");
+                if (data) {
+                  const serviceId = parseInt(data.toString());
+                  handleServiceLink(serviceId).then(isSuccess => {
+                    if (isSuccess) {
+                      setMarkMembersDialogOpen(false);
+                      members.refetch().catch(_ => null);
+                    }
+                  }).catch(_ => null);
+                }
               }}
             >
               <FormControl fullWidth variant="standard">
@@ -222,10 +230,10 @@ const Home: NextPage = () => {
               const tx = {
                 ...member,
                 id: index + 1,
-                service1: service1 ? member.present.includes(service1) : false,
-                service2: service2 ? member.present.includes(service2) : false,
-                service3: service3 ? member.present.includes(service3) : false,
-                service4: service4 ? member.present.includes(service4) : false,
+                service1: service1 ? member.present.find(present => present.id === service1.id) : false,
+                service2: service2 ? member.present.find(present => present.id === service2.id) : false,
+                service3: service3 ? member.present.find(present => present.id === service3.id) : false,
+                service4: service4 ? member.present.find(present => present.id === service4.id) : false,
               };
               return tx;
             }) ?? []
