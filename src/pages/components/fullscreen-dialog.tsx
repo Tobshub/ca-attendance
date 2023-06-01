@@ -19,6 +19,15 @@ import {
   TextField,
 } from "@mui/material";
 import LoadingButton from "./loading-btn";
+import {
+  DateCalendar,
+  DateField,
+  LocalizationProvider,
+} from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import dayjsUTC from "dayjs/plugin/utc";
+dayjs.extend(dayjsUTC);
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -29,7 +38,7 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-interface FullScreenDialogProps {
+interface AddMemberDialogProps {
   open: boolean;
   handleClose: () => void;
   addMember: (data: {
@@ -41,12 +50,12 @@ interface FullScreenDialogProps {
   mutation: { isLoading: boolean; isError: boolean; isSuccess: boolean };
 }
 
-export default function FullScreenDialog({
+export function AddMemberDialog({
   open,
   handleClose,
   addMember,
   mutation: { isSuccess, isError, isLoading },
-}: FullScreenDialogProps) {
+}: AddMemberDialogProps) {
   const [useMutationState, setUseMutationState] = React.useState(true);
   const dialogFormRef = React.useRef<HTMLFormElement>(null);
   const resetFormBtnRef = React.useRef<HTMLButtonElement>(null);
@@ -194,3 +203,143 @@ export default function FullScreenDialog({
     </div>
   );
 }
+
+interface CreateServiceDialogProps {
+  open: boolean;
+  handleClose: () => void;
+  createService: (data: { name: string; date: Date }) => Promise<boolean>;
+  mutation: { isLoading: boolean; isError: boolean; isSuccess: boolean };
+}
+
+export const CreateServiceDialog = ({
+  open,
+  handleClose,
+  createService,
+  mutation: { isLoading, isError, isSuccess },
+}: CreateServiceDialogProps) => {
+  const [useMutationState, setUseMutationState] = React.useState(true);
+  const dialogFormRef = React.useRef<HTMLFormElement>(null);
+  const resetFormBtnRef = React.useRef<HTMLButtonElement>(null);
+  const localHandleClose = () => {
+    setUseMutationState(false);
+    handleClose();
+  };
+  const [newServiceDate, setNewServiceDate] = React.useState<string | null>(
+    null
+  );
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const form = dialogFormRef.current;
+    if (form) {
+      const formData = new FormData(form);
+      const rawDate = formData.get("date")?.toString() ?? "";
+      const data = {
+        name: formData.get("name")?.toString() ?? "Service",
+        date: new Date(dayjs.utc(rawDate, "DD/MM/YYYY").toString())
+      }
+      createService(data)
+        .then((isSuccess) => {
+          if (isSuccess) {
+            resetFormBtnRef.current?.click();
+            setNewServiceDate(null);
+          }
+        })
+        .catch((_) => null);
+    }
+  };
+  return (
+    <div>
+      <Snackbar
+        open={useMutationState && (isSuccess || isError)}
+        autoHideDuration={5000}
+        onClose={() => setUseMutationState(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      >
+        <Alert
+          onClose={() => setUseMutationState(false)}
+          severity={isSuccess ? "success" : "error"}
+        >
+          {isSuccess ? "Service Created" : "Failed to create new Service"}
+        </Alert>
+      </Snackbar>
+      <Dialog
+        fullScreen
+        open={open}
+        onClose={localHandleClose}
+        TransitionComponent={Transition}
+        sx={{ maxWidth: 1000, marginInline: "auto" }}
+      >
+        <AppBar sx={{ position: "relative" }}>
+          <Toolbar sx={{ display: "flex", flexWrap: "wrap" }}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={localHandleClose}
+              aria-label="close"
+            >
+              <CloseIcon />
+            </IconButton>
+            <Typography
+              sx={{ ml: 2, flex: 1, minWidth: "fit-content" }}
+              variant="h6"
+              component="div"
+            >
+              Create a new Service
+            </Typography>
+            <DialogActions>
+              <LoadingButton
+                variant={
+                  useMutationState
+                    ? isSuccess
+                      ? "contained"
+                      : "outlined"
+                    : "outlined"
+                }
+                onClick={handleSubmit}
+                isLoading={isLoading}
+                isSuccess={isSuccess}
+                isError={isError}
+                useMutationState={useMutationState}
+                color="inherit"
+              >
+                Create Service
+              </LoadingButton>
+            </DialogActions>
+          </Toolbar>
+        </AppBar>
+        <form
+          className={styles.dialog_form}
+          ref={dialogFormRef}
+          onSubmit={handleSubmit}
+        >
+          <button type="reset" style={{ visibility: "hidden" }} />
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={"en-gb"}>
+            <Typography>Pick the Service Date</Typography>
+            <DateField
+              required
+              name="date"
+              value={newServiceDate}
+              onChange={(val) => setNewServiceDate(val)}
+              format="DD/MM/YYYY"
+              label={
+                newServiceDate
+                  ? dayjs(newServiceDate).format("dddd")
+                  : "Service Date"
+              }
+            />
+            <DateCalendar
+              sx={{ mx: 0 }}
+              value={newServiceDate}
+              onChange={(val) => setNewServiceDate(val)}
+            />
+          </LocalizationProvider>
+          <TextField
+            label="Service Name"
+            name="name"
+            defaultValue="Church Service"
+          />
+        </form>
+      </Dialog>
+    </div>
+  );
+};

@@ -10,7 +10,7 @@ import { useMemo, useState } from "react";
 import { api } from "@/utils/api";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 
-const UseAddMember = (
+const useAddMember = (
   mutationOptions: Parameters<typeof api.member.new.useMutation>[0]
 ) => {
   const [addMemberDialogOpen, setAddMemberDialogOpen] = useState(false);
@@ -35,31 +35,49 @@ const UseAddMember = (
   };
 };
 
+const useCreateService = (
+  mutationOptions: Parameters<typeof api.service.new.useMutation>[0]
+) => {
+  const [createServiceDialogOpen, setCreateServiceDialogOpen] = useState(false);
+  const createServiceMut = api.service.new.useMutation(mutationOptions);
+
+  const createService = async (data: { name: string; date: Date }) => {
+    const success = await createServiceMut
+      .mutateAsync(data)
+      .then((data) => data.ok)
+      .catch((_) => false);
+    return success;
+  };
+
+  return {
+    createServiceDialogOpen,
+    setCreateServiceDialogOpen,
+    createService,
+    createServiceMut,
+  };
+};
+
 const Home: NextPage = () => {
   const {
     addMemberDialogOpen,
     setAddMemberDialogOpen,
     addMemberMut,
     addMember,
-  } = UseAddMember({});
+  } = useAddMember({});
   const members = api.member.get.useQuery({});
+  const {
+    createServiceMut,
+    createService,
+    createServiceDialogOpen,
+    setCreateServiceDialogOpen,
+  } = useCreateService({});
   const services = api.service.get.useQuery({ limit: 4 });
   const [service1, service2, service3, service4] = services.data?.value ?? [];
-  const [createServiceDialogOpen, setCreateServiceDialogOpen] = useState(false);
-
-  const createServiceMut = api.service.new.useMutation({
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (err) => {
-      console.error(err);
-    },
-  });
 
   // prettier-ignore
   const COLUMNS: GridColDef[] = useMemo(
     () => [
-      { field: "id", headerName: "N/O" },
+      { field: "id", headerName: "N/O", },
       { field: "name", headerName: "Name", minWidth: 230, sortable: false },
       {
         field: "sex",
@@ -75,12 +93,26 @@ const Home: NextPage = () => {
     []
   );
 
-  const createService = async (data: { name: string; date: Date }) => {
-    const success = await createServiceMut
-      .mutateAsync(data)
-      .then((data) => data.ok)
-      .catch((_) => false);
-    return success;
+  const [selectedMembersIndex, setSelectedMembersIndex] = useState<number[]>(
+    []
+  );
+  const [markMembersDialogOpen, setMarkMembersDialogOpen] = useState(false);
+  const markMembersMut = api.service.markMembers.useMutation({
+    onSuccess: (data) => console.log(data),
+    onError: (err) => console.error(err),
+  });
+  const handleServiceLink = async (serviceId: number) => {
+    if (members.data) {
+      const selectedMembers = selectedMembersIndex
+        .map((i) => members.data.value[i - 1]?.id)
+        .filter((member) => member !== undefined) as number[];
+      console.log(selectedMembers);
+      const success = await markMembersMut
+        .mutateAsync({ id: serviceId, members: selectedMembers })
+        .then((data) => data.ok)
+        .catch((_) => false);
+      return success;
+    }
   };
   return (
     <>
@@ -104,6 +136,9 @@ const Home: NextPage = () => {
         >
           CREATE SERVICE
         </Button>
+        <Button onClick={() => setMarkMembersDialogOpen(true)}>
+          MARK SELECTED AS PRESENT
+        </Button>
         <AddMemberDialog
           open={addMemberDialogOpen}
           handleClose={() => setAddMemberDialogOpen(false)}
@@ -117,20 +152,24 @@ const Home: NextPage = () => {
           mutation={createServiceMut}
         />
         <DataGrid
+          onRowSelectionModelChange={(selection) =>
+            setSelectedMembersIndex(selection as number[])
+          }
           initialState={{
             pagination: { paginationModel: { page: 0, pageSize: 30 } },
           }}
           pageSizeOptions={[15, 30, 60, 90]}
           rows={
-            members.data?.value.map((member) => {
+            members.data?.value.map((member, index) => {
               // prettier-ignore
               const tx = {
-                  ...member,
-                  service1: service1 ? member.present.includes(service1) : false,
-                  service2: service2 ? member.present.includes(service2) : false,
-                  service3: service3 ? member.present.includes(service3) : false,
-                  service4: service4 ? member.present.includes(service4) : false,
-                };
+                ...member,
+                id: index + 1,
+                service1: service1 ? member.present.includes(service1) : false,
+                service2: service2 ? member.present.includes(service2) : false,
+                service3: service3 ? member.present.includes(service3) : false,
+                service4: service4 ? member.present.includes(service4) : false,
+              };
               return tx;
             }) ?? []
           }
