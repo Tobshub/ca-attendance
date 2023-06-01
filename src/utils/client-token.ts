@@ -17,7 +17,7 @@ export const ClientToken = {
     if (!localStorage) return undefined;
     let token = localStorage.getItem(TOKEN);
     if (token) {
-      token = JSON.parse(token);
+      token = JSON.parse(token) as string;
       return token;
     }
     return undefined;
@@ -27,7 +27,7 @@ export const ClientToken = {
     let token = localStorage.getItem(TOKEN);
     if (token) {
       localStorage.removeItem(TOKEN);
-      token = JSON.parse(token);
+      token = JSON.parse(token) as string;
       return token;
     } else {
       return undefined;
