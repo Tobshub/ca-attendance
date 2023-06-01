@@ -1,4 +1,13 @@
-import { Button } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import styles from "./index.module.css";
 import { type NextPage } from "next";
 import Head from "next/head";
@@ -9,6 +18,7 @@ import {
 import { useMemo, useState } from "react";
 import { api } from "@/utils/api";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { setMaxListeners } from "events";
 
 const useAddMember = (
   mutationOptions: Parameters<typeof api.member.new.useMutation>[0]
@@ -151,6 +161,53 @@ const Home: NextPage = () => {
           createService={createService}
           mutation={createServiceMut}
         />
+        <Dialog
+          open={markMembersDialogOpen}
+          onClose={() => setMarkMembersDialogOpen(false)}
+        >
+          <DialogTitle>
+            Mark <strong>{selectedMembersIndex.length}</strong> selected
+            member(s) as present for Service on:
+          </DialogTitle>
+          <DialogContent>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                console.log(formData);
+              }}
+            >
+              <FormControl fullWidth variant="standard">
+                <InputLabel>Service Date</InputLabel>
+                <Select
+                  required
+                  label="Service Date"
+                  defaultValue={services.data?.value[0]?.id ?? ""}
+                  name="serviceId"
+                >
+                  {services.data
+                    ? services.data.value.map((service) =>
+                        service ? (
+                          <MenuItem
+                            value={service.id}
+                            key={service.id}
+                            defaultChecked={
+                              service.id === services.data.value[0]?.id
+                            }
+                          >
+                            {service.date.toLocaleDateString("en-GB")}
+                          </MenuItem>
+                        ) : null
+                      )
+                    : null}
+                </Select>
+              </FormControl>
+              <Button variant="contained" type="submit" sx={{ my: 1 }}>
+                Mark Attendance
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
         <DataGrid
           onRowSelectionModelChange={(selection) =>
             setSelectedMembersIndex(selection as number[])
