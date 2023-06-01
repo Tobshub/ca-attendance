@@ -1,6 +1,6 @@
 import { Box, Button, CircularProgress } from "@mui/material";
-import { green, red } from "@mui/material/colors";
-import { PropsWithChildren, MouseEvent } from "react";
+import { green } from "@mui/material/colors";
+import type { PropsWithChildren, MouseEvent } from "react";
 
 interface LoadingButtonProps {
   isLoading: boolean;
@@ -8,7 +8,14 @@ interface LoadingButtonProps {
   isError: boolean;
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void | undefined;
   variant: "contained" | "outlined" | "text";
-  color?: "success" | "error" | "inherit" | "primary" | "secondary" | "info" | "warning";
+  color?:
+    | "success"
+    | "error"
+    | "inherit"
+    | "primary"
+    | "secondary"
+    | "info"
+    | "warning";
   useMutationState?: boolean | undefined;
 }
 
