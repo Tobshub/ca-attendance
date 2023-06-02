@@ -18,7 +18,7 @@ import {
 import { useMemo, useState } from "react";
 import { api } from "@/utils/api";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
-import { MarkMembersDialog } from "@/components/un_mark-members-dialog";
+import { MarkMembersDialog, UnmarkMembersDialog } from "@/components/un_mark-members-dialog";
 
 const useAddMember = (
   mutationOptions: Parameters<typeof api.member.new.useMutation>[0]
@@ -113,14 +113,12 @@ const Home: NextPage = () => {
     []
   );
   const [markMembersDialogOpen, setMarkMembersDialogOpen] = useState(false);
-  const markMembersMut = api.service.markMembers.useMutation({
-    onSuccess: (data) => {},
+  const [unmarkMembersDialogOpen, setUnmarkMembersDialogOpen] = useState(false);
+  const markMembersMut = api.service.markMembers.useMutation();
+  const unmarkMembersMut = api.service.unmarkMembers.useMutation({
+    onSuccess: (data) => console.log(data),
     onError: (err) => console.error(err),
   });
-  // const unmarkMembersMut = api.service.unmarkMembers.useMutation({
-  //   onSuccess: (data) => console.log(data),
-  //   onError: (err) => console.error(err),
-  // });
   const handleMarkingMembers = async (serviceId: number) => {
     if (members.data) {
       const selectedMembers = selectedMembersIndex
@@ -134,18 +132,19 @@ const Home: NextPage = () => {
     }
     return false;
   };
-  // const handleUnmarkingMembers = async (serviceId: number) => {
-  //   if (members.data) {
-  //     const selectedMembers = selectedMembersIndex
-  //       .map((i) => members.data.value[i - 1]?.id)
-  //       .filter((member) => member !== undefined) as number[];
-  //     const success = await unmarkMembersMut
-  //       .mutateAsync({ id: serviceId, members: selectedMembers })
-  //       .then((data) => data.ok)
-  //       .catch((_) => false);
-  //     return success;
-  //   }
-  // };
+  const handleUnmarkingMembers = async (serviceId: number) => {
+    if (members.data) {
+      const selectedMembers = selectedMembersIndex
+        .map((i) => members.data.value[i - 1]?.id)
+        .filter((member) => member !== undefined) as number[];
+      const success = await unmarkMembersMut
+        .mutateAsync({ id: serviceId, members: selectedMembers })
+        .then((data) => data.ok)
+        .catch((_) => false);
+      return success;
+    }
+    return false;
+  };
   return (
     <>
       <Head>
@@ -174,6 +173,12 @@ const Home: NextPage = () => {
         >
           MARK SELECTED AS PRESENT
         </Button>
+        <Button
+          disabled={selectedMembersIndex.length < 1}
+          onClick={() => setUnmarkMembersDialogOpen(true)}
+        >
+          MARK SELECTED AS ABSENT
+        </Button>
         <AddMemberDialog
           open={addMemberDialogOpen}
           handleClose={() => setAddMemberDialogOpen(false)}
@@ -196,6 +201,17 @@ const Home: NextPage = () => {
           services={services.data?.value ?? []}
           handleMarkingMembers={handleMarkingMembers}
           mutation={markMembersMut}
+        />
+        <UnmarkMembersDialog
+          open={unmarkMembersDialogOpen}
+          handleClose={() => setUnmarkMembersDialogOpen(false)}
+          refetchMembers={() => {
+            members.refetch().catch((_) => null);
+          }}
+          selectedMembersCount={selectedMembersIndex.length}
+          services={services.data?.value ?? []}
+          handleUnmarkingMembers={handleUnmarkingMembers}
+          mutation={unmarkMembersMut}
         />
         <DataGrid
           onRowSelectionModelChange={(selection) =>
