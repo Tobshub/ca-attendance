@@ -8,7 +8,7 @@ import {
 } from "@/components/fullscreen-dialog";
 import { useMemo, useState } from "react";
 import { api } from "@/utils/api";
-import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar, type GridColDef } from "@mui/x-data-grid";
 import {
   MarkMembersDialog,
   UnmarkMembersDialog,
@@ -96,10 +96,6 @@ const Home: NextPage = () => {
         width: 100,
         valueFormatter: ({ value }) => (value === "MALE" ? "M" : "F"),
       },
-      { field: "service1",  headerName: service1?.date?.toLocaleDateString("en-GB") ?? "Attendance 1", type: "boolean" },
-      { field: "service2",  headerName: service2?.date?.toLocaleDateString("en-GB") ?? "Attendance 2", type: "boolean" },
-      { field: "service3",  headerName: service3?.date?.toLocaleDateString("en-GB") ?? "Attendance 3", type: "boolean" },
-      { field: "service4",  headerName: service4?.date?.toLocaleDateString("en-GB") ?? "Attendance 4", type: "boolean" },
       { field: "service1",  headerName: service1?.date?.toLocaleDateString("en-GB") ?? "Service 1", type: "boolean" },
       { field: "service2",  headerName: service2?.date?.toLocaleDateString("en-GB") ?? "Service 2", type: "boolean" },
       { field: "service3",  headerName: service3?.date?.toLocaleDateString("en-GB") ?? "Service 3", type: "boolean" },
@@ -225,6 +221,7 @@ const Home: NextPage = () => {
           onRowSelectionModelChange={(selection) =>
             setSelectedMembersIndex(selection as number[])
           }
+          slots={{ toolbar: GridToolbar }}
           initialState={{
             pagination: { paginationModel: { page: 0, pageSize: 30 } },
           }}
