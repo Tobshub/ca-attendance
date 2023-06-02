@@ -7,7 +7,7 @@ export const HeaderWithLogo = () => {
     <AppBar>
       <Toolbar sx={{ gap: 2 }}>
         <Image src={rccgLogo} alt="RCCG Logo" width={32} height={32} />
-        <Typography variant="h6">RCCG Calvary Assembly Ikoyi</Typography>
+        <Typography variant="h6">Calvary Assembly Ikoyi</Typography>
       </Toolbar>
     </AppBar>
   );
