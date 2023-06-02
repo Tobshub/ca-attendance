@@ -74,13 +74,19 @@ const Home: NextPage = () => {
     addMember,
   } = useAddMember({});
   const members = api.member.get.useQuery({});
+  const services = api.service.get.useQuery({ limit: 4 });
   const {
     createServiceMut,
     createService,
     createServiceDialogOpen,
     setCreateServiceDialogOpen,
-  } = useCreateService({});
-  const services = api.service.get.useQuery({ limit: 4 });
+  } = useCreateService({
+    onSuccess: (data) => {
+      if (data.ok) {
+        services.refetch().catch((_) => null);
+      }
+    },
+  });
   const [service1, service2, service3, service4] = services.data?.value ?? [];
 
   // prettier-ignore
