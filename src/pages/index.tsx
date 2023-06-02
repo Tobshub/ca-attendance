@@ -167,12 +167,16 @@ const Home: NextPage = () => {
           CREATE SERVICE
         </Button>
         <Button
+          sx={{ my: 1, mx: 1 }}
+          variant="outlined"
           disabled={selectedMembersIndex.length < 1}
           onClick={() => setMarkMembersDialogOpen(true)}
         >
           MARK SELECTED AS PRESENT
         </Button>
         <Button
+          sx={{ my: 1, mx: 1 }}
+          variant="outlined"
           disabled={selectedMembersIndex.length < 1}
           onClick={() => setUnmarkMembersDialogOpen(true)}
         >
