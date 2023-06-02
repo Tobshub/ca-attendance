@@ -50,12 +50,12 @@ interface AddMemberDialogProps {
   mutation: { isLoading: boolean; isError: boolean; isSuccess: boolean };
 }
 
-export function AddMemberDialog({
+export const AddMemberDialog = ({
   open,
   handleClose,
   addMember,
   mutation: { isSuccess, isError, isLoading },
-}: AddMemberDialogProps) {
+}: AddMemberDialogProps) => {
   const [useMutationState, setUseMutationState] = React.useState(true);
   const dialogFormRef = React.useRef<HTMLFormElement>(null);
   const resetFormBtnRef = React.useRef<HTMLButtonElement>(null);
