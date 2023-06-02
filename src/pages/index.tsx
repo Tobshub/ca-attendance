@@ -100,6 +100,10 @@ const Home: NextPage = () => {
       { field: "service2",  headerName: service2?.date?.toLocaleDateString("en-GB") ?? "Attendance 2", type: "boolean" },
       { field: "service3",  headerName: service3?.date?.toLocaleDateString("en-GB") ?? "Attendance 3", type: "boolean" },
       { field: "service4",  headerName: service4?.date?.toLocaleDateString("en-GB") ?? "Attendance 4", type: "boolean" },
+      { field: "service1",  headerName: service1?.date?.toLocaleDateString("en-GB") ?? "Service 1", type: "boolean" },
+      { field: "service2",  headerName: service2?.date?.toLocaleDateString("en-GB") ?? "Service 2", type: "boolean" },
+      { field: "service3",  headerName: service3?.date?.toLocaleDateString("en-GB") ?? "Service 3", type: "boolean" },
+      { field: "service4",  headerName: service4?.date?.toLocaleDateString("en-GB") ?? "Service 4", type: "boolean" },
     ],
     [service1?.date, service2?.date, service3?.date, service4?.date]
   );
@@ -217,6 +221,7 @@ const Home: NextPage = () => {
           mutation={unmarkMembersMut}
         />
         <DataGrid
+          sx={{ height: "fit-content" }}
           onRowSelectionModelChange={(selection) =>
             setSelectedMembersIndex(selection as number[])
           }
