@@ -6,7 +6,7 @@ import {
   AddMemberDialog,
   CreateServiceDialog,
 } from "@/components/fullscreen-dialog";
-import { useMemo, useState } from "react";
+import { useMemo, useState, MouseEvent } from "react";
 import { api } from "@/utils/api";
 import { DataGrid, GridToolbar, type GridColDef } from "@mui/x-data-grid";
 import {
@@ -14,6 +14,7 @@ import {
   UnmarkMembersDialog,
 } from "@/components/un_mark-members-dialog";
 import { HeaderWithLogo } from "@/components/logo";
+import { MoreMemberInfo } from "@/components/more-info";
 
 const useAddMember = (
   mutationOptions: Parameters<typeof api.member.new.useMutation>[0]
@@ -140,6 +141,23 @@ const Home: NextPage = () => {
     }
     return false;
   };
+
+  const [moreMemberInfoDialogOpen, setMoreMemberInfoDialogOpen] =
+    useState(false);
+  const [moreMemberInfoIndex, setMoreMemberInfoIndex] = useState(1);
+  const handleNameRightClick = (e: MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    const field = e.currentTarget.dataset.field;
+    if (field === "name") {
+      const _row = e.currentTarget.parentElement?.dataset.id;
+      if (_row) {
+        const row = parseInt(_row) - 1;
+        setMoreMemberInfoIndex(row);
+        setMoreMemberInfoDialogOpen(true);
+      }
+    }
+  };
+
   return (
     <>
       <Head>
@@ -242,7 +260,19 @@ const Home: NextPage = () => {
           }
           columns={COLUMNS}
           checkboxSelection
+          slotProps={{
+            cell: {
+              onContextMenu: handleNameRightClick,
+            },
+          }}
         />
+        {members.data?.value[moreMemberInfoIndex] ? (
+          <MoreMemberInfo
+            open={moreMemberInfoDialogOpen}
+            handleClose={() => setMoreMemberInfoDialogOpen(false)}
+            memberInfo={members.data.value[moreMemberInfoIndex]}
+          />
+        ) : null}
       </main>
     </>
   );
