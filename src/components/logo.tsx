@@ -1,4 +1,4 @@
-import { AppBar, Box, Container, Toolbar, Typography } from "@mui/material";
+import { AppBar, Toolbar, Typography } from "@mui/material";
 import Image from "next/image";
 import rccgLogo from "@/assets/rccg-logo.png";
 
