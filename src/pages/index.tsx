@@ -105,7 +105,7 @@ const Home: NextPage = () => {
       { field: "service3",  headerName: service3?.date?.toLocaleDateString("en-GB") ?? "Attendance 3", type: "boolean" },
       { field: "service4",  headerName: service4?.date?.toLocaleDateString("en-GB") ?? "Attendance 4", type: "boolean" },
     ],
-    []
+    [service1?.date, service2?.date, service3?.date, service4?.date]
   );
 
   const [selectedMembersIndex, setSelectedMembersIndex] = useState<number[]>(
