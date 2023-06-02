@@ -14,11 +14,10 @@ import Head from "next/head";
 import {
   AddMemberDialog,
   CreateServiceDialog,
-} from "./components/fullscreen-dialog";
+} from "@/components/fullscreen-dialog";
 import { useMemo, useState } from "react";
 import { api } from "@/utils/api";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
-import { setMaxListeners } from "events";
 
 const useAddMember = (
   mutationOptions: Parameters<typeof api.member.new.useMutation>[0]

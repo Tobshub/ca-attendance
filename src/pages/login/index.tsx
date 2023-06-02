@@ -7,7 +7,7 @@ import { type FormEvent, useState, useEffect } from "react";
 import { ClientToken } from "@/utils/client-token";
 import { useRouter } from "next/router";
 import { useSearchParams } from "next/navigation";
-import LoadingButton from "../components/loading-btn";
+import LoadingButton from "@/components/loading-btn";
 
 const Login: NextPage = () => {
   const router = useRouter();
