@@ -18,6 +18,7 @@ import {
 import { useMemo, useState } from "react";
 import { api } from "@/utils/api";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { MarkMembersDialog } from "@/components/un_mark-members-dialog";
 
 const useAddMember = (
   mutationOptions: Parameters<typeof api.member.new.useMutation>[0]
@@ -113,10 +114,14 @@ const Home: NextPage = () => {
   );
   const [markMembersDialogOpen, setMarkMembersDialogOpen] = useState(false);
   const markMembersMut = api.service.markMembers.useMutation({
-    onSuccess: (data) => console.log(data),
+    onSuccess: (data) => {},
     onError: (err) => console.error(err),
   });
-  const handleServiceLink = async (serviceId: number) => {
+  // const unmarkMembersMut = api.service.unmarkMembers.useMutation({
+  //   onSuccess: (data) => console.log(data),
+  //   onError: (err) => console.error(err),
+  // });
+  const handleMarkingMembers = async (serviceId: number) => {
     if (members.data) {
       const selectedMembers = selectedMembersIndex
         .map((i) => members.data.value[i - 1]?.id)
@@ -127,7 +132,20 @@ const Home: NextPage = () => {
         .catch((_) => false);
       return success;
     }
+    return false;
   };
+  // const handleUnmarkingMembers = async (serviceId: number) => {
+  //   if (members.data) {
+  //     const selectedMembers = selectedMembersIndex
+  //       .map((i) => members.data.value[i - 1]?.id)
+  //       .filter((member) => member !== undefined) as number[];
+  //     const success = await unmarkMembersMut
+  //       .mutateAsync({ id: serviceId, members: selectedMembers })
+  //       .then((data) => data.ok)
+  //       .catch((_) => false);
+  //     return success;
+  //   }
+  // };
   return (
     <>
       <Head>
@@ -168,62 +186,17 @@ const Home: NextPage = () => {
           createService={createService}
           mutation={createServiceMut}
         />
-        <Dialog
+        <MarkMembersDialog
           open={markMembersDialogOpen}
-          onClose={() => setMarkMembersDialogOpen(false)}
-        >
-          <DialogTitle>
-            Mark <strong>{selectedMembersIndex.length}</strong> selected
-            member(s) as present for Service on:
-          </DialogTitle>
-          <DialogContent>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.currentTarget);
-                const data =formData.get("serviceId");
-                if (data) {
-                  const serviceId = parseInt(data.toString());
-                  handleServiceLink(serviceId).then(isSuccess => {
-                    if (isSuccess) {
-                      setMarkMembersDialogOpen(false);
-                      members.refetch().catch(_ => null);
-                    }
-                  }).catch(_ => null);
-                }
-              }}
-            >
-              <FormControl fullWidth variant="standard">
-                <InputLabel>Service Date</InputLabel>
-                <Select
-                  required
-                  label="Service Date"
-                  defaultValue={services.data?.value[0]?.id ?? ""}
-                  name="serviceId"
-                >
-                  {services.data
-                    ? services.data.value.map((service) =>
-                        service ? (
-                          <MenuItem
-                            value={service.id}
-                            key={service.id}
-                            defaultChecked={
-                              service.id === services.data.value[0]?.id
-                            }
-                          >
-                            {service.date.toLocaleDateString("en-GB")}
-                          </MenuItem>
-                        ) : null
-                      )
-                    : null}
-                </Select>
-              </FormControl>
-              <Button variant="contained" type="submit" sx={{ my: 1 }}>
-                Mark Attendance
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
+          handleClose={() => setMarkMembersDialogOpen(false)}
+          refetchMembers={() => {
+            members.refetch().catch((_) => null);
+          }}
+          selectedMembersCount={selectedMembersIndex.length}
+          services={services.data?.value ?? []}
+          handleMarkingMembers={handleMarkingMembers}
+          mutation={markMembersMut}
+        />
         <DataGrid
           onRowSelectionModelChange={(selection) =>
             setSelectedMembersIndex(selection as number[])
