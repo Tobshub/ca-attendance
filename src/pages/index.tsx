@@ -150,7 +150,10 @@ const Home: NextPage = () => {
         >
           CREATE SERVICE
         </Button>
-        <Button onClick={() => setMarkMembersDialogOpen(true)}>
+        <Button
+          disabled={selectedMembersIndex.length < 1}
+          onClick={() => setMarkMembersDialogOpen(true)}
+        >
           MARK SELECTED AS PRESENT
         </Button>
         <AddMemberDialog
