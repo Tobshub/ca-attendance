@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Toolbar } from "@mui/material";
 import styles from "./index.module.css";
 import { type NextPage } from "next";
 import Head from "next/head";
@@ -13,6 +13,7 @@ import {
   MarkMembersDialog,
   UnmarkMembersDialog,
 } from "@/components/un_mark-members-dialog";
+import { HeaderWithLogo } from "@/components/logo";
 
 const useAddMember = (
   mutationOptions: Parameters<typeof api.member.new.useMutation>[0]
@@ -146,6 +147,10 @@ const Home: NextPage = () => {
         <meta name="description" content="Mark church members attendance" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <header>
+        <HeaderWithLogo />
+      </header>
+      <Toolbar />
       <main className={styles.main}>
         <Button
           sx={{ my: 1, mx: 1 }}
