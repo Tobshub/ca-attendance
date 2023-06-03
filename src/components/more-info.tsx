@@ -12,7 +12,7 @@ import {
 import { type TransitionProps } from "@mui/material/transitions";
 import CloseIcon from "@mui/icons-material/Close";
 import * as React from "react";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {

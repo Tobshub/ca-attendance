@@ -6,7 +6,7 @@ import {
   AddMemberDialog,
   CreateServiceDialog,
 } from "@/components/fullscreen-dialog";
-import { useMemo, useState, MouseEvent } from "react";
+import { useMemo, useState, type MouseEvent } from "react";
 import { api } from "@/utils/api";
 import { DataGrid, GridToolbar, type GridColDef } from "@mui/x-data-grid";
 import {
