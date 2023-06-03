@@ -1,25 +1,50 @@
-import { Button, Toolbar } from "@mui/material";
+import { Backdrop, Button, Toolbar } from "@mui/material";
 import styles from "./index.module.css";
 import { type NextPage } from "next";
 import Head from "next/head";
-import {
-  AddMemberDialog,
-  CreateServiceDialog,
-} from "@/components/fullscreen-dialog";
 import { useMemo, useState, type MouseEvent } from "react";
 import { api } from "@/utils/api";
 import { DataGrid, GridToolbar, type GridColDef } from "@mui/x-data-grid";
-import {
-  MarkMembersDialog,
-  UnmarkMembersDialog,
-} from "@/components/un_mark-members-dialog";
 import { HeaderWithLogo } from "@/components/logo";
-import { MoreMemberInfo } from "@/components/more-info";
 import {
   useAddMember,
   useCreateService,
   useAttendance,
 } from "@/hooks/home-hooks";
+import { TempBackDrop } from "@/components/backdrop";
+import dynamic from "next/dynamic";
+const AddMemberDialog = dynamic(
+  () =>
+    import("@/components/fullscreen-dialog").then((mod) => mod.AddMemberDialog),
+  {
+    loading: ({ isLoading }) => <TempBackDrop open={isLoading ?? false} />,
+  }
+);
+const CreateServiceDialog = dynamic(
+  () =>
+    import("@/components/fullscreen-dialog").then(
+      (mod) => mod.CreateServiceDialog
+    ),
+  { loading: ({ isLoading }) => <TempBackDrop open={isLoading ?? false} /> }
+);
+const MarkMembersDialog = dynamic(
+  () =>
+    import("@/components/un_mark-members-dialog").then(
+      (mod) => mod.MarkMembersDialog
+    ),
+  { loading: ({ isLoading }) => <TempBackDrop open={isLoading ?? false} /> }
+);
+const UnmarkMembersDialog = dynamic(
+  () =>
+    import("@/components/un_mark-members-dialog").then(
+      (mod) => mod.UnmarkMembersDialog
+    ),
+  { loading: ({ isLoading }) => <TempBackDrop open={isLoading ?? false} /> }
+);
+const MoreMemberInfo = dynamic(
+  () => import("@/components/more-info").then((mod) => mod.MoreMemberInfo),
+  { loading: ({ isLoading }) => <TempBackDrop open={isLoading ?? false} /> }
+);
 
 const Home: NextPage = () => {
   const members = api.member.get.useQuery({});
@@ -28,11 +53,13 @@ const Home: NextPage = () => {
     setAddMemberDialogOpen,
     addMemberMut,
     addMember,
-  } = useAddMember({ onSuccess: (data) => {
-    if (data.ok) {
-      members.refetch().catch(_ => null);
-    }
-  }});
+  } = useAddMember({
+    onSuccess: (data) => {
+      if (data.ok) {
+        members.refetch().catch((_) => null);
+      }
+    },
+  });
   const services = api.service.get.useQuery({ limit: 10 });
   const {
     createServiceMut,
