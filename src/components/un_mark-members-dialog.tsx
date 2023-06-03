@@ -74,7 +74,7 @@ export const MarkMembersDialog = ({
                       handleClose();
                     }
                   })
-                  .catch((_) => null);
+                  .catch(() => null);
               }
             }}
           >
@@ -179,7 +179,7 @@ export const UnmarkMembersDialog = ({
                       handleClose();
                     }
                   })
-                  .catch((_) => null);
+                  .catch(() => null);
               }
             }}
           >

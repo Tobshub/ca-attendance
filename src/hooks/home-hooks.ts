@@ -15,7 +15,7 @@ export const useAddMember = (
     const success = await addMemberMut
       .mutateAsync(data)
       .then((data) => data.ok)
-      .catch((_) => false);
+      .catch(() => false);
     return success;
   };
   return {
@@ -36,7 +36,7 @@ export const useCreateService = (
     const success = await createServiceMut
       .mutateAsync(data)
       .then((data) => data.ok)
-      .catch((_) => false);
+      .catch(() => false);
     return success;
   };
 
@@ -65,7 +65,7 @@ export const useAttendance = (members: { id: number }[]) => {
     const success = await markMembersMut
       .mutateAsync({ id: serviceId, members: selectedMembers })
       .then((data) => data.ok)
-      .catch((_) => false);
+      .catch(() => false);
     return success;
   };
 
@@ -76,7 +76,7 @@ export const useAttendance = (members: { id: number }[]) => {
     const success = await unmarkMembersMut
       .mutateAsync({ id: serviceId, members: selectedMembers })
       .then((data) => data.ok)
-      .catch((_) => false);
+      .catch(() => false);
     return success;
   };
 

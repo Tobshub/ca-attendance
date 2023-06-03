@@ -122,11 +122,11 @@ export const MoreMemberInfo = ({
         .then((data) => {
           if (data.ok && memberInfo) {
             memberInfo = { ...data.value, present: memberInfo.present };
-            refetchMembers().catch((_) => null);
+            refetchMembers().catch(() => null);
             setIsEditMode(false);
           }
         })
-        .catch((_) => null);
+        .catch(() => null);
     }
   };
 

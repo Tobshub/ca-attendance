@@ -83,7 +83,7 @@ export const AddMemberDialog = ({
             resetFormBtnRef.current?.click();
           }
         })
-        .catch((_) => null);
+        .catch(() => null);
     }
   };
   return (
@@ -246,7 +246,7 @@ export const CreateServiceDialog = ({
             setNewServiceDate(null);
           }
         })
-        .catch((_) => null);
+        .catch(() => null);
     }
   };
   return (

@@ -55,7 +55,7 @@ const Home: NextPage = () => {
   } = useAddMember({
     onSuccess: (data) => {
       if (data.ok) {
-        members.refetch().catch((_) => null);
+        members.refetch().catch(() => null);
       }
     },
   });
@@ -68,7 +68,7 @@ const Home: NextPage = () => {
   } = useCreateService({
     onSuccess: (data) => {
       if (data.ok) {
-        services.refetch().catch((_) => null);
+        services.refetch().catch(() => null);
       }
     },
   });
@@ -177,7 +177,7 @@ const Home: NextPage = () => {
           open={markMembersDialogOpen}
           handleClose={() => setMarkMembersDialogOpen(false)}
           refetchMembers={() => {
-            members.refetch().catch((_) => null);
+            members.refetch().catch(() => null);
           }}
           selectedMembersCount={selectedMembersIndex.length}
           services={services.data?.value ?? []}
@@ -188,7 +188,7 @@ const Home: NextPage = () => {
           open={unmarkMembersDialogOpen}
           handleClose={() => setUnmarkMembersDialogOpen(false)}
           refetchMembers={() => {
-            members.refetch().catch((_) => null);
+            members.refetch().catch(() => null);
           }}
           selectedMembersCount={selectedMembersIndex.length}
           services={services.data?.value ?? []}
@@ -234,7 +234,7 @@ const Home: NextPage = () => {
             memberInfo={members.data.value[moreMemberInfoIndex]}
             services={services.data?.value ?? []}
             refetchMembers={async () => {
-              await members.refetch().catch((_) => null);
+              await members.refetch().catch(() => null);
             }}
           />
         ) : null}

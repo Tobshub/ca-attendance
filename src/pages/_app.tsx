@@ -15,13 +15,13 @@ const MyApp: AppType = ({ Component, pageProps }) => {
     if (url !== "/login") {
       const token = ClientToken.get();
       if (!token) {
-        router.push(`/login?cb=${url}`).catch((_) => null);
+        router.push(`/login?cb=${url}`).catch(() => null);
       } else {
         if (searchParams.get("reload") === "true") {
           router
             .push(url)
             .then((ok) => (ok ? router.reload() : null))
-            .catch((_) => null);
+            .catch(() => null);
         }
       }
     }

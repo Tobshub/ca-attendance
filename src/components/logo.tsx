@@ -23,7 +23,7 @@ export const HeaderWithLogo = () => {
     useState(false);
   const handleSignOut = () => {
     ClientToken.remove();
-    router.push("/login").catch((_) => null);
+    router.push("/login").catch(() => null);
   };
   return (
     <>

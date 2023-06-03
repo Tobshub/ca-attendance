@@ -17,7 +17,7 @@ const Login: NextPage = () => {
       if (data.ok) {
         ClientToken.set(data.value);
         goTo = goTo ?? "/";
-        router.push(`${goTo}?reload=true`).catch((_) => null);
+        router.push(`${goTo}?reload=true`).catch(() => null);
       }
     },
   });
@@ -28,7 +28,7 @@ const Login: NextPage = () => {
       username: formData.get("username") as string,
       password: formData.get("password") as string,
     };
-    await loginMut.mutateAsync(data).catch((_) => null);
+    await loginMut.mutateAsync(data).catch(() => null);
   };
   const [showPassword, setShowPassword] = useState(false);
 
@@ -41,12 +41,12 @@ const Login: NextPage = () => {
         .mutateAsync(token)
         .then((data) => {
           if (data.ok) {
-            router.push(goTo ?? "/").catch((_) => null);
+            router.push(goTo ?? "/").catch(() => null);
           } else {
             ClientToken.remove();
           }
         })
-        .catch((_) => null);
+        .catch(() => null);
     }
   }, []);
   return (
@@ -59,7 +59,7 @@ const Login: NextPage = () => {
         <form
           className={styles.form}
           onSubmit={(e) => {
-            handleSubmit(e).catch((_) => null);
+            handleSubmit(e).catch(() => null);
           }}
         >
           <TextField
