@@ -176,6 +176,7 @@ export const AddMemberDialog = ({
             disabled={isLoading}
           />
           <TextField
+            multiline
             label="Address"
             name="address"
             variant="standard"
