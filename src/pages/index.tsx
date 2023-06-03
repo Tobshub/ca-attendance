@@ -234,6 +234,9 @@ const Home: NextPage = () => {
             handleClose={() => setMoreMemberInfoDialogOpen(false)}
             memberInfo={members.data.value[moreMemberInfoIndex]}
             services={services.data?.value ?? []}
+            refetchMembers={async () => {
+              await members.refetch().catch((_) => null);
+            }}
           />
         ) : null}
       </main>

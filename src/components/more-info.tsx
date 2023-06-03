@@ -18,6 +18,8 @@ import { type TransitionProps } from "@mui/material/transitions";
 import CloseIcon from "@mui/icons-material/Close";
 import * as React from "react";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { api } from "@/utils/api";
+import LoadingButton from "./loading-btn";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -71,6 +73,7 @@ interface MoreMemberInfoProps {
   handleClose: () => void;
   memberInfo:
     | {
+        id: number;
         name: string;
         phoneNum: string;
         address: string | null;
@@ -79,31 +82,59 @@ interface MoreMemberInfoProps {
       }
     | undefined;
   services: { date: Date; id: number }[];
+  refetchMembers: () => Promise<void>;
 }
 
 export const MoreMemberInfo = ({
-  memberInfo,
+  memberInfo: _memberInfo,
   handleClose,
   open,
   services,
+  refetchMembers,
 }: MoreMemberInfoProps) => {
+  const [useMutationState, setUseMutationState] = React.useState(false);
+  const [memberInfo, setMemberInfo] = React.useState(_memberInfo);
   const localHandleClose = () => {
+    setUseMutationState(false);
     handleClose();
   };
 
   const [isEditMode, setIsEditMode] = React.useState(false);
   const editInfoFormRef = React.useRef<HTMLFormElement>(null);
+  const editMemberMut = api.member.update.useMutation({
+    onSuccess: (data) => {
+      if (data.ok && memberInfo) {
+        setMemberInfo(state => state ? ({...data.value, present: state.present}) : undefined);
+      }
+    },
+  });
 
   const handleSave = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    setIsEditMode(false);
+    if (editInfoFormRef.current && memberInfo) {
+      setUseMutationState(true);
+      const formData = new FormData(editInfoFormRef.current);
+      const data = {
+        name: formData.get("name")?.toString(),
+        address: formData.get("address")?.toString(),
+        phoneNum: formData.get("phoneNum")?.toString(),
+        sex: formData.get("sex")?.toString() as "MALE" | "FEMALE" | undefined,
+      };
+      editMemberMut.mutate({ id: memberInfo.id, data });
+      refetchMembers().catch((_) => null);
+      setIsEditMode(false);
+    }
   };
 
-  // prettier-ignore
+  // const deleteMemberMut = api.member.
+  // const deleteMember = () => {
+
+  // }
+
   const COLUMNS: GridColDef[] = React.useMemo(
     () => [
       { field: "id", width: 148, headerName: "Service Date" },
-      { field: "present", width: 148, headerName: "Present", type: "boolean"}
+      { field: "present", width: 148, headerName: "Present", type: "boolean" },
     ],
     []
   );
@@ -114,6 +145,7 @@ export const MoreMemberInfo = ({
 
   return (
     <Dialog
+      keepMounted={false}
       fullScreen
       open={open}
       onClose={localHandleClose}
@@ -137,17 +169,21 @@ export const MoreMemberInfo = ({
           >
             Member Info
           </Typography>
-          <Box>
+          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
             {isEditMode ? (
               <>
-                <Button
+                <LoadingButton
                   color="success"
-                  sx={{ mr: 1 }}
                   variant="contained"
+                  useMutationState={useMutationState}
+                  isLoading={editMemberMut.isLoading}
+                  isError={editMemberMut.isError}
+                  isSuccess={editMemberMut.isSuccess}
+                  sx={{ m: 0 }}
                   onClick={handleSave}
                 >
                   SAVE
-                </Button>
+                </LoadingButton>
                 <Button
                   color="error"
                   variant="contained"
@@ -160,7 +196,6 @@ export const MoreMemberInfo = ({
               <>
                 <Button
                   onClick={() => setIsEditMode(true)}
-                  sx={{ mr: 1 }}
                   color="info"
                   variant="contained"
                 >
@@ -227,7 +262,9 @@ export const MoreMemberInfo = ({
             density="compact"
             rows={services.map((service) => ({
               id: service.date.toLocaleDateString("en-GB"),
-              present: !!memberInfo.present.find(({ id }) => id === service.id),
+              present: !!memberInfo?.present.find(
+                ({ id }) => id === service.id
+              ),
             }))}
             columns={COLUMNS}
             initialState={{
