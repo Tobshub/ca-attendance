@@ -71,7 +71,7 @@ const Home: NextPage = () => {
     addMember,
   } = useAddMember({});
   const members = api.member.get.useQuery({});
-  const services = api.service.get.useQuery({ limit: 4 });
+  const services = api.service.get.useQuery({ limit: 10 });
   const {
     createServiceMut,
     createService,
@@ -145,16 +145,13 @@ const Home: NextPage = () => {
   const [moreMemberInfoDialogOpen, setMoreMemberInfoDialogOpen] =
     useState(false);
   const [moreMemberInfoIndex, setMoreMemberInfoIndex] = useState(1);
-  const handleNameRightClick = (e: MouseEvent<HTMLElement>) => {
+  const handleContextEvent = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    const field = e.currentTarget.dataset.field;
-    if (field === "name") {
-      const _row = e.currentTarget.parentElement?.dataset.id;
-      if (_row) {
-        const row = parseInt(_row) - 1;
-        setMoreMemberInfoIndex(row);
-        setMoreMemberInfoDialogOpen(true);
-      }
+    const _row = e.currentTarget.parentElement?.dataset.id;
+    if (_row) {
+      const row = parseInt(_row) - 1;
+      setMoreMemberInfoIndex(row);
+      setMoreMemberInfoDialogOpen(true);
     }
   };
 
@@ -262,7 +259,7 @@ const Home: NextPage = () => {
           checkboxSelection
           slotProps={{
             cell: {
-              onContextMenu: handleNameRightClick,
+              onContextMenu: handleContextEvent,
             },
           }}
         />
@@ -271,6 +268,7 @@ const Home: NextPage = () => {
             open={moreMemberInfoDialogOpen}
             handleClose={() => setMoreMemberInfoDialogOpen(false)}
             memberInfo={members.data.value[moreMemberInfoIndex]}
+            services={services.data?.value ?? []}
           />
         ) : null}
       </main>
