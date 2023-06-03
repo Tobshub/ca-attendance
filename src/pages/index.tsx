@@ -15,16 +15,24 @@ import {
 } from "@/components/un_mark-members-dialog";
 import { HeaderWithLogo } from "@/components/logo";
 import { MoreMemberInfo } from "@/components/more-info";
-import { useAddMember, useCreateService } from "@/hooks/home-hooks";
+import {
+  useAddMember,
+  useCreateService,
+  useAttendance,
+} from "@/hooks/home-hooks";
 
 const Home: NextPage = () => {
+  const members = api.member.get.useQuery({});
   const {
     addMemberDialogOpen,
     setAddMemberDialogOpen,
     addMemberMut,
     addMember,
-  } = useAddMember({});
-  const members = api.member.get.useQuery({});
+  } = useAddMember({ onSuccess: (data) => {
+    if (data.ok) {
+      members.refetch().catch(_ => null);
+    }
+  }});
   const services = api.service.get.useQuery({ limit: 10 });
   const {
     createServiceMut,
@@ -59,42 +67,18 @@ const Home: NextPage = () => {
     [service1?.date, service2?.date, service3?.date, service4?.date]
   );
 
-  const [selectedMembersIndex, setSelectedMembersIndex] = useState<number[]>(
-    []
-  );
-  const [markMembersDialogOpen, setMarkMembersDialogOpen] = useState(false);
-  const [unmarkMembersDialogOpen, setUnmarkMembersDialogOpen] = useState(false);
-  const markMembersMut = api.service.markMembers.useMutation();
-  const unmarkMembersMut = api.service.unmarkMembers.useMutation({
-    onSuccess: (data) => console.log(data),
-    onError: (err) => console.error(err),
-  });
-  const handleMarkingMembers = async (serviceId: number) => {
-    if (members.data) {
-      const selectedMembers = selectedMembersIndex
-        .map((i) => members.data.value[i - 1]?.id)
-        .filter((member) => member !== undefined) as number[];
-      const success = await markMembersMut
-        .mutateAsync({ id: serviceId, members: selectedMembers })
-        .then((data) => data.ok)
-        .catch((_) => false);
-      return success;
-    }
-    return false;
-  };
-  const handleUnmarkingMembers = async (serviceId: number) => {
-    if (members.data) {
-      const selectedMembers = selectedMembersIndex
-        .map((i) => members.data.value[i - 1]?.id)
-        .filter((member) => member !== undefined) as number[];
-      const success = await unmarkMembersMut
-        .mutateAsync({ id: serviceId, members: selectedMembers })
-        .then((data) => data.ok)
-        .catch((_) => false);
-      return success;
-    }
-    return false;
-  };
+  const {
+    selectedMembersIndex,
+    setSelectedMembersIndex,
+    unmarkMembersDialogOpen,
+    setUnmarkMembersDialogOpen,
+    markMembersDialogOpen,
+    setMarkMembersDialogOpen,
+    handleMarkingMembers,
+    handleUnmarkingMembers,
+    markMembersMut,
+    unmarkMembersMut,
+  } = useAttendance(members.data?.value ?? []);
 
   const [moreMemberInfoDialogOpen, setMoreMemberInfoDialogOpen] =
     useState(false);
