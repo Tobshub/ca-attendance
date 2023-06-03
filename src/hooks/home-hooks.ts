@@ -47,3 +47,49 @@ export const useCreateService = (
     createServiceMut,
   };
 };
+
+export const useAttendance = (members: { id: number }[]) => {
+  const [selectedMembersIndex, setSelectedMembersIndex] = useState<number[]>(
+    []
+  );
+  const [markMembersDialogOpen, setMarkMembersDialogOpen] = useState(false);
+  const [unmarkMembersDialogOpen, setUnmarkMembersDialogOpen] = useState(false);
+
+  const markMembersMut = api.service.markMembers.useMutation();
+  const unmarkMembersMut = api.service.unmarkMembers.useMutation();
+
+  const handleMarkingMembers = async (serviceId: number) => {
+    const selectedMembers = selectedMembersIndex
+      .map((i) => members[i - 1]?.id)
+      .filter((member) => member !== undefined) as number[];
+    const success = await markMembersMut
+      .mutateAsync({ id: serviceId, members: selectedMembers })
+      .then((data) => data.ok)
+      .catch((_) => false);
+    return success;
+  };
+
+  const handleUnmarkingMembers = async (serviceId: number) => {
+    const selectedMembers = selectedMembersIndex
+      .map((i) => members[i - 1]?.id)
+      .filter((member) => member !== undefined) as number[];
+    const success = await unmarkMembersMut
+      .mutateAsync({ id: serviceId, members: selectedMembers })
+      .then((data) => data.ok)
+      .catch((_) => false);
+    return success;
+  };
+
+  return {
+    selectedMembersIndex,
+    setSelectedMembersIndex,
+    markMembersDialogOpen,
+    setMarkMembersDialogOpen,
+    unmarkMembersDialogOpen,
+    setUnmarkMembersDialogOpen,
+    handleMarkingMembers,
+    handleUnmarkingMembers,
+    markMembersMut,
+    unmarkMembersMut,
+  };
+};
