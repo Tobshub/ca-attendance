@@ -86,14 +86,13 @@ interface MoreMemberInfoProps {
 }
 
 export const MoreMemberInfo = ({
-  memberInfo: _memberInfo,
+  memberInfo,
   handleClose,
   open,
   services,
   refetchMembers,
 }: MoreMemberInfoProps) => {
   const [useMutationState, setUseMutationState] = React.useState(false);
-  const [memberInfo, setMemberInfo] = React.useState(_memberInfo);
   const localHandleClose = () => {
     setUseMutationState(false);
     handleClose();
@@ -101,13 +100,7 @@ export const MoreMemberInfo = ({
 
   const [isEditMode, setIsEditMode] = React.useState(false);
   const editInfoFormRef = React.useRef<HTMLFormElement>(null);
-  const editMemberMut = api.member.update.useMutation({
-    onSuccess: (data) => {
-      if (data.ok && memberInfo) {
-        setMemberInfo(state => state ? ({...data.value, present: state.present}) : undefined);
-      }
-    },
-  });
+  const editMemberMut = api.member.update.useMutation();
 
   const handleSave = (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -120,9 +113,16 @@ export const MoreMemberInfo = ({
         phoneNum: formData.get("phoneNum")?.toString(),
         sex: formData.get("sex")?.toString() as "MALE" | "FEMALE" | undefined,
       };
-      editMemberMut.mutate({ id: memberInfo.id, data });
-      refetchMembers().catch((_) => null);
-      setIsEditMode(false);
+      editMemberMut
+        .mutateAsync({ id: memberInfo.id, data })
+        .then((data) => {
+          if (data.ok && memberInfo) {
+            memberInfo = { ...data.value, present: memberInfo.present };
+            refetchMembers().catch((_) => null);
+            setIsEditMode(false);
+          }
+        })
+        .catch((_) => null);
     }
   };
 
