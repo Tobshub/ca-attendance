@@ -315,7 +315,7 @@ export const CreateServiceDialog = ({
           onSubmit={handleSubmit}
         >
           <button type="reset" style={{ visibility: "hidden" }} />
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={"en-gb"}>
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={"en"}>
             <Typography>Pick the Service Date</Typography>
             <DateField
               required
