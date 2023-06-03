@@ -1,4 +1,4 @@
-import { Backdrop, Button, Toolbar } from "@mui/material";
+import { Button, Toolbar } from "@mui/material";
 import styles from "./index.module.css";
 import { type NextPage } from "next";
 import Head from "next/head";
