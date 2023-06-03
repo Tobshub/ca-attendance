@@ -52,10 +52,10 @@ const Login: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Login</title>
+        <title>Calvary Assembly Ikoyi</title>
       </Head>
       <main className={styles.main}>
-        <h1>Login</h1>
+        <h1>Welcome. Please Login</h1>
         <form
           className={styles.form}
           onSubmit={(e) => {
