@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { ClientToken } from "@/utils/client-token";
+import { Typography } from "@mui/material";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   const url = usePathname();
@@ -25,7 +26,12 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       }
     }
   }, [router, url, searchParams]);
-  return <Component {...pageProps} />;
+  return (
+    <>
+      <Component {...pageProps} />
+      <Typography variant="subtitle2" sx={{ textAlign: "right"}}>Made by Tobani Esan-George.</Typography>
+    </>
+  );
 };
 
 export default api.withTRPC(MyApp);
