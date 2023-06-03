@@ -1,9 +1,14 @@
 import {
   AppBar,
   Box,
+  Button,
   Container,
   Dialog,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   Slide,
   TextField,
   Toolbar,
@@ -22,6 +27,44 @@ const Transition = React.forwardRef(function Transition(
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
+
+interface DisplayMemberInfoProps {
+  memberInfo: NonNullable<MoreMemberInfoProps["memberInfo"]>;
+}
+
+const DisplayMemberInfo = ({ memberInfo }: DisplayMemberInfoProps) => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        gap: "1rem",
+        flexDirection: "column",
+        alignItems: "flex-start",
+      }}
+    >
+      <Box sx={{ my: 2 }}>
+        Full Name:
+        <Typography variant="h5">{memberInfo.name}</Typography>
+        <Typography variant="subtitle1">
+          Sex: {memberInfo.sex === "MALE" ? "M" : "F"}
+        </Typography>
+      </Box>
+      <TextField
+        disabled
+        aria-readonly
+        value={memberInfo.phoneNum}
+        label="Phone No."
+      />
+      <TextField
+        disabled
+        aria-readonly
+        value={memberInfo.address}
+        multiline
+        label="Address"
+      />
+    </div>
+  );
+};
 
 interface MoreMemberInfoProps {
   open: boolean;
@@ -46,6 +89,14 @@ export const MoreMemberInfo = ({
 }: MoreMemberInfoProps) => {
   const localHandleClose = () => {
     handleClose();
+  };
+
+  const [isEditMode, setIsEditMode] = React.useState(false);
+  const editInfoFormRef = React.useRef<HTMLFormElement>(null);
+
+  const handleSave = (e: { preventDefault: Function }) => {
+    e.preventDefault();
+    setIsEditMode(false);
   };
 
   // prettier-ignore
@@ -86,6 +137,41 @@ export const MoreMemberInfo = ({
           >
             Member Info
           </Typography>
+          <Box>
+            {isEditMode ? (
+              <>
+                <Button
+                  color="success"
+                  sx={{ mr: 1 }}
+                  variant="contained"
+                  onClick={handleSave}
+                >
+                  SAVE
+                </Button>
+                <Button
+                  color="error"
+                  variant="contained"
+                  onClick={() => setIsEditMode(false)}
+                >
+                  CANCEL
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  onClick={() => setIsEditMode(true)}
+                  sx={{ mr: 1 }}
+                  color="info"
+                  variant="contained"
+                >
+                  EDIT
+                </Button>
+                <Button color="error" variant="contained">
+                  DELETE
+                </Button>
+              </>
+            )}
+          </Box>
         </Toolbar>
       </AppBar>
       <Container
@@ -98,35 +184,44 @@ export const MoreMemberInfo = ({
           justifyContent: "space-around",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            gap: "1rem",
-            flexDirection: "column",
-            alignItems: "flex-start",
-          }}
-        >
-          <Box sx={{ my: 2 }}>
-            Full Name:
-            <Typography variant="h5">{memberInfo.name}</Typography>
-            <Typography variant="subtitle1">
-              Sex: {memberInfo.sex === "MALE" ? "M" : "F"}
-            </Typography>
-          </Box>
-          <TextField
-            disabled
-            aria-readonly
-            value={memberInfo.phoneNum}
-            label="Phone No."
-          />
-          <TextField
-            disabled
-            aria-readonly
-            value={memberInfo.address}
-            multiline
-            label="Address"
-          />
-        </div>
+        {isEditMode ? (
+          <form
+            style={{
+              display: "flex",
+              gap: "1rem",
+              flexDirection: "column",
+              alignItems: "flex-start",
+            }}
+            ref={editInfoFormRef}
+            onSubmit={handleSave}
+          >
+            <TextField
+              label="Full Name"
+              name="name"
+              defaultValue={memberInfo.name}
+            />
+            <FormControl sx={{ minWidth: 80 }}>
+              <InputLabel>Sex</InputLabel>
+              <Select label="Sex" name="sex" defaultValue={memberInfo.sex}>
+                <MenuItem value="MALE">Male</MenuItem>
+                <MenuItem value="FEMALE">Female</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField
+              label="Phone No."
+              name="phoneNum"
+              defaultValue={memberInfo.phoneNum}
+            />
+            <TextField
+              multiline
+              label="Address"
+              name="address"
+              defaultValue={memberInfo.address}
+            />
+          </form>
+        ) : (
+          <DisplayMemberInfo memberInfo={memberInfo} />
+        )}
         <div style={{ width: 300 }}>
           <DataGrid
             density="compact"
