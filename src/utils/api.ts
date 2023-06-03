@@ -40,7 +40,7 @@ export const api = createTRPCNext<AppRouter>({
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
           headers: {
-            authorization: ClientToken.get() ?? undefined,
+            authorization: ClientToken.get() ?? "",
           },
         }),
       ],
