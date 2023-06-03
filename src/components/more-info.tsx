@@ -4,6 +4,9 @@ import {
   Button,
   Container,
   Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   IconButton,
   InputLabel,
@@ -140,6 +143,24 @@ export const MoreMemberInfo = ({
     []
   );
 
+  const [deleteMemberDialogOpen, setDeleteMemberDialogOpen] =
+    React.useState(false);
+  const deleteMemberMut = api.member.delete.useMutation({
+    onSuccess: (data) => {
+      if (data.ok) {
+        refetchMembers().then(() => {
+          localHandleClose();
+        }).catch(() => null)
+      }
+    },
+  });
+
+  const handleMemberDelete = () => {
+    if (memberInfo) {
+      deleteMemberMut.mutate({ id: memberInfo.id });
+    }
+  };
+
   if (!memberInfo) {
     return null;
   }
@@ -202,7 +223,10 @@ export const MoreMemberInfo = ({
                 >
                   EDIT
                 </Button>
-                <IconButton color="error">
+                <IconButton
+                  color="error"
+                  onClick={() => setDeleteMemberDialogOpen(true)}
+                >
                   <DeleteIcon />
                 </IconButton>
               </>
@@ -275,6 +299,31 @@ export const MoreMemberInfo = ({
           />
         </div>
       </Container>
+      <Dialog
+        open={deleteMemberDialogOpen}
+        onClose={() => setDeleteMemberDialogOpen(false)}
+      >
+        <DialogTitle>Remove Member</DialogTitle>
+        <DialogContent>
+          You are attempting to remove {memberInfo.name} as a member.
+          <br /> If you are sure, tap the confirm <strong>CONFIRM</strong>{" "}
+          button.
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" color="warning" onClick={() => setDeleteMemberDialogOpen(false)}>
+            CANCEL
+          </Button>
+          <LoadingButton
+            onClick={handleMemberDelete}
+            {...deleteMemberMut}
+            useMutationState={true}
+            color="error"
+            variant="contained"
+          >
+            REMOVE
+          </LoadingButton>
+        </DialogActions>
+      </Dialog>
     </Dialog>
   );
 };
