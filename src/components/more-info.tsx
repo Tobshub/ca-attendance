@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { type TransitionProps } from "@mui/material/transitions";
 import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
 import * as React from "react";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { api } from "@/utils/api";
@@ -201,9 +202,9 @@ export const MoreMemberInfo = ({
                 >
                   EDIT
                 </Button>
-                <Button color="error" variant="contained">
-                  DELETE
-                </Button>
+                <IconButton color="error">
+                  <DeleteIcon />
+                </IconButton>
               </>
             )}
           </Box>
