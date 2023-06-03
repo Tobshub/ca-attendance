@@ -94,7 +94,7 @@ export const MoreMemberInfo = ({
   const [isEditMode, setIsEditMode] = React.useState(false);
   const editInfoFormRef = React.useRef<HTMLFormElement>(null);
 
-  const handleSave = (e: { preventDefault: Function }) => {
+  const handleSave = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setIsEditMode(false);
   };
