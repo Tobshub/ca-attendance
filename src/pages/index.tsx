@@ -1,5 +1,4 @@
 import { Button, Toolbar } from "@mui/material";
-import styles from "./index.module.css";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useMemo, useState, type MouseEvent } from "react";
@@ -131,7 +130,7 @@ const Home: NextPage = () => {
         <HeaderWithLogo />
       </header>
       <Toolbar />
-      <main className={styles.main}>
+      <main>
         <Button
           sx={{ my: 1, mx: 1 }}
           variant="contained"
