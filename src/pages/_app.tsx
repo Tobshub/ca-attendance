@@ -17,11 +17,14 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         router.push(`/login?cb=${url}`).catch((_) => null);
       } else {
         if (searchParams.get("reload") === "true") {
-          router.push(url).then(ok => ok ? router.reload() : null);
+          router
+            .push(url)
+            .then((ok) => (ok ? router.reload() : null))
+            .catch((_) => null);
         }
       }
     }
-  }, [router, url]);
+  }, [router, url, searchParams]);
   return <Component {...pageProps} />;
 };
 
