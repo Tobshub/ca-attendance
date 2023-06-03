@@ -11,13 +11,13 @@ import LoadingButton from "@/components/loading-btn";
 
 const Login: NextPage = () => {
   const router = useRouter();
-  const goTo = useSearchParams().get("cb");
+  let goTo = useSearchParams().get("cb");
   const loginMut = api.auth.login.useMutation({
     onSuccess: (data) => {
       if (data.ok) {
         ClientToken.set(data.value);
-        console.log(goTo);
-        router.push(goTo ?? "/").catch((_) => null);
+        goTo = goTo ?? "/";
+        router.push(`${goTo}?reload=true`).catch((_) => null);
       }
     },
   });
@@ -37,15 +37,18 @@ const Login: NextPage = () => {
     // delete token if invalid
     const token = ClientToken.get();
     if (token) {
-      authMut.mutateAsync(token).then(data => {
-        if (data.ok) {
-          router.push(goTo ?? "/").catch(_ => null);
-        } else {
-          ClientToken.remove();
-        }
-      }).catch(_ => null);
+      authMut
+        .mutateAsync(token)
+        .then((data) => {
+          if (data.ok) {
+            router.push(goTo ?? "/").catch((_) => null);
+          } else {
+            ClientToken.remove();
+          }
+        })
+        .catch((_) => null);
     }
-  }, [])
+  }, []);
   return (
     <>
       <Head>
