@@ -1,4 +1,10 @@
-import { Box, Button, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  type SxProps,
+  type Theme,
+} from "@mui/material";
 import { green } from "@mui/material/colors";
 import type { PropsWithChildren, MouseEvent } from "react";
 
@@ -17,6 +23,7 @@ interface LoadingButtonProps {
     | "info"
     | "warning";
   useMutationState?: boolean | undefined;
+  sx?: SxProps<Theme>;
 }
 
 const LoadingButton = ({
@@ -28,9 +35,10 @@ const LoadingButton = ({
   variant,
   color,
   useMutationState,
+  sx,
 }: LoadingButtonProps & PropsWithChildren) => {
   return (
-    <Box sx={{ m: 1, position: "relative", width: "fit-content" }}>
+    <Box sx={{ m: 1, position: "relative", width: "fit-content", ...sx }}>
       <Button
         color={
           useMutationState
