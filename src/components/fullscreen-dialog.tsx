@@ -230,6 +230,7 @@ export const CreateServiceDialog = ({
   );
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setUseMutationState(true);
     const form = dialogFormRef.current;
     if (form) {
       const formData = new FormData(form);
