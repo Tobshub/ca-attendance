@@ -1,4 +1,5 @@
 import { createTRPCRouter } from "../../trpc";
+import { DeleteMember } from "./controllers/delete-member";
 import { FilterMembers } from "./controllers/filter-members";
 import { GetOneMember } from "./controllers/get-member";
 import { GetMembers } from "./controllers/get-members";
@@ -14,4 +15,5 @@ export const memberRouter = createTRPCRouter({
   update: UpdateMember,
   mark: MarkMember,
   unmark: UnMarkMember,
+  delete: DeleteMember,
 });
