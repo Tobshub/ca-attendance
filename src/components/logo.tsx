@@ -17,14 +17,40 @@ import { useRouter } from "next/router";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useState } from "react";
 
-export const HeaderWithLogo = () => {
+interface SignoutDialogProps {
+  open: boolean;
+  close: () => void;
+}
+
+const SignoutDialog = ({ open, close }: SignoutDialogProps) => {
   const router = useRouter();
-  const [signOutConfirmDialogOpen, setSignOutConfirmDialogOpen] =
-    useState(false);
   const handleSignOut = () => {
     ClientToken.remove();
     router.push("/login").catch(() => null);
   };
+
+  return (
+    <Dialog open={open} onClose={close}>
+      <DialogTitle>Signing Out?</DialogTitle>
+      <DialogContent>
+        You are attempting to sign out.
+        <br /> If this is intentional tap the <strong>CONFIRM</strong> button.
+      </DialogContent>
+      <DialogActions>
+        <Button color="warning" variant="outlined" onClick={close}>
+          CANCEl
+        </Button>
+        <Button color="error" variant="contained" onClick={handleSignOut}>
+          CONFIRM
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+export const HeaderWithLogo = () => {
+  const [signOutConfirmDialogOpen, setSignOutConfirmDialogOpen] =
+    useState(false);
   return (
     <>
       <AppBar>
@@ -48,28 +74,10 @@ export const HeaderWithLogo = () => {
           </Box>
         </Toolbar>
       </AppBar>
-      <Dialog
+      <SignoutDialog
         open={signOutConfirmDialogOpen}
-        onClose={() => setSignOutConfirmDialogOpen(false)}
-      >
-        <DialogTitle>Signing Out?</DialogTitle>
-        <DialogContent>
-          You are attempting to sign out.
-          <br /> If this is intentional tap the <strong>CONFIRM</strong> button.
-        </DialogContent>
-        <DialogActions>
-          <Button
-            color="warning"
-            variant="outlined"
-            onClick={() => setSignOutConfirmDialogOpen(false)}
-          >
-            CANCEl
-          </Button>
-          <Button color="error" variant="contained" onClick={handleSignOut}>
-            CONFIRM
-          </Button>
-        </DialogActions>
-      </Dialog>
+        close={() => setSignOutConfirmDialogOpen(false)}
+      />
     </>
   );
 };
