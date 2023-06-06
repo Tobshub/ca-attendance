@@ -89,6 +89,7 @@ interface MoreMemberInfoProps {
   refetchMembers: () => Promise<void>;
 }
 
+// TODO: show alerts when member is edited or deleted
 export const MoreMemberInfo = ({
   memberInfo,
   handleClose,
@@ -129,11 +130,6 @@ export const MoreMemberInfo = ({
         .catch(() => null);
     }
   };
-
-  // const deleteMemberMut = api.member.
-  // const deleteMember = () => {
-
-  // }
 
   const COLUMNS: GridColDef[] = React.useMemo(
     () => [
