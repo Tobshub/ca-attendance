@@ -131,9 +131,9 @@ function DocsDialog({ open, close }: DocsDialogProps) {
       <DialogContent>
         <h3>Add a member</h3>
         <p>
-          To add a member, simple click the "ADD MEMBERS" button on the home
+          {`To add a member, simple click the "ADD MEMBERS" button on the home
           page. In the modal that opens up, fill in the required information and
-          then click "ADD MEMBER" in the open modal.
+          then click "ADD MEMBER" in the open modal.`}
         </p>
         <p>
           An alert at the bottom of your screen will let you know if the member
@@ -145,10 +145,10 @@ function DocsDialog({ open, close }: DocsDialogProps) {
           a service on that day.
         </p>
         <p>
-          To do that, simply click the "CREATE SERVICE" button on the home page.
+          {`To do that, simply click the "CREATE SERVICE" button on the home page.
           In the modal that opens up, pick the date of the service and
           optionally fill in the service name. Finally, click the "CREATE
-          SERVICE" button in the modal.
+          SERVICE" button in the modal.`}
         </p>
         <p>
           An alert at the bottom of your screen will let you know if the service
@@ -166,14 +166,14 @@ function DocsDialog({ open, close }: DocsDialogProps) {
           present.
         </p>
         <p>
-          When the member(s) is/are selected, the "MARK SELECTED AS PRESENT"
+          {`When the member(s) is/are selected, the "MARK SELECTED AS PRESENT"
           button on the home page will become enabled. Click it and in the
           pop-up, select the date of the service to mark the members present
-          for.
+          for.`}
         </p>
         <p>
-          If you mistakenly marked any member(s) as present, the "MARK SELECTED
-          AS ABSENT" will help you undo that.
+          {`If you mistakenly marked any member(s) as present, the "MARK SELECTED
+          AS ABSENT" will help you undo that.`}
         </p>
         <p>
           For both actions, an alert at bottom of your screen will let you know
@@ -186,17 +186,17 @@ function DocsDialog({ open, close }: DocsDialogProps) {
           four most recent services).
         </p>
         <p>
-          All member information, including their overall attendance, can be
-          found on the member's more info page.
+          {`All member information, including their overall attendance, can be
+          found on the member's more info page.`}
         </p>
         <p>
-          To access the more info page of a member, simple right click (for
-          desktop) or hold (for mobile) the member's row on the data table.
+          {`To access the more info page of a member, simple right click (for
+          desktop) or hold (for mobile) the member's row on the data table.`}
         </p>
         <p>
-          From a member's more info page, their data can be edited by clicking
+          {`From a member's more info page, their data can be edited by clicking
           the "EDIT" button, or the member can be deleted completely by clicking
-          the delete (trash bin) icon.
+          the delete (trash bin) icon.`}
         </p>
       </DialogContent>
     </Dialog>
