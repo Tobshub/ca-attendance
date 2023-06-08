@@ -128,10 +128,10 @@ const Home: NextPage = () => {
         width: 100,
         valueFormatter: ({ value }) => (value === "MALE" ? "M" : "F"),
       },
-      { field: "service1",  headerName: service1?.date?.toLocaleDateString("en-GB") ?? "Service 1", type: "boolean" },
-      { field: "service2",  headerName: service2?.date?.toLocaleDateString("en-GB") ?? "Service 2", type: "boolean" },
-      { field: "service3",  headerName: service3?.date?.toLocaleDateString("en-GB") ?? "Service 3", type: "boolean" },
-      { field: "service4",  headerName: service4?.date?.toLocaleDateString("en-GB") ?? "Service 4", type: "boolean" },
+      { field: "service1",  headerName: service1?.date?.toLocaleDateString("en-GB") ?? "No service", type: "boolean" },
+      { field: "service2",  headerName: service2?.date?.toLocaleDateString("en-GB") ?? "No service", type: "boolean" },
+      { field: "service3",  headerName: service3?.date?.toLocaleDateString("en-GB") ?? "No service", type: "boolean" },
+      { field: "service4",  headerName: service4?.date?.toLocaleDateString("en-GB") ?? "No service", type: "boolean" },
     ],
     [service1?.date, service2?.date, service3?.date, service4?.date]
   );
