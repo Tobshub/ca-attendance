@@ -7,9 +7,9 @@ import {
   DataGrid,
   GridToolbar,
   type GridColDef,
-  GridColumnMenuProps,
+  type GridColumnMenuProps,
   GridColumnMenu,
-  GridColumnMenuItemProps,
+  type GridColumnMenuItemProps,
 } from "@mui/x-data-grid";
 import { HeaderWithLogo } from "@/components/logo";
 import {
