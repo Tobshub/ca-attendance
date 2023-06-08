@@ -204,40 +204,48 @@ const Home: NextPage = () => {
         >
           MARK SELECTED AS ABSENT
         </Button>
-        <AddMemberDialog
-          open={addMemberDialogOpen}
-          handleClose={() => setAddMemberDialogOpen(false)}
-          addMember={addMember}
-          mutation={addMemberMut}
-        />
-        <CreateServiceDialog
-          open={createServiceDialogOpen}
-          handleClose={() => setCreateServiceDialogOpen(false)}
-          createService={createService}
-          mutation={createServiceMut}
-        />
-        <MarkMembersDialog
-          open={markMembersDialogOpen}
-          handleClose={() => setMarkMembersDialogOpen(false)}
-          refetchMembers={() => {
-            members.refetch().catch(() => null);
-          }}
-          selectedMembersCount={selectedMembersIndex.length}
-          services={services.data?.value ?? []}
-          handleMarkingMembers={handleMarkingMembers}
-          mutation={markMembersMut}
-        />
-        <UnmarkMembersDialog
-          open={unmarkMembersDialogOpen}
-          handleClose={() => setUnmarkMembersDialogOpen(false)}
-          refetchMembers={() => {
-            members.refetch().catch(() => null);
-          }}
-          selectedMembersCount={selectedMembersIndex.length}
-          services={services.data?.value ?? []}
-          handleUnmarkingMembers={handleUnmarkingMembers}
-          mutation={unmarkMembersMut}
-        />
+        {addMemberDialogOpen && (
+          <AddMemberDialog
+            open={addMemberDialogOpen}
+            handleClose={() => setAddMemberDialogOpen(false)}
+            addMember={addMember}
+            mutation={addMemberMut}
+          />
+        )}
+        {createServiceDialogOpen && (
+          <CreateServiceDialog
+            open={createServiceDialogOpen}
+            handleClose={() => setCreateServiceDialogOpen(false)}
+            createService={createService}
+            mutation={createServiceMut}
+          />
+        )}
+        {markMembersDialogOpen && (
+          <MarkMembersDialog
+            open={markMembersDialogOpen}
+            handleClose={() => setMarkMembersDialogOpen(false)}
+            refetchMembers={() => {
+              members.refetch().catch(() => null);
+            }}
+            selectedMembersCount={selectedMembersIndex.length}
+            services={services.data?.value ?? []}
+            handleMarkingMembers={handleMarkingMembers}
+            mutation={markMembersMut}
+          />
+        )}
+        {unmarkMembersDialogOpen && (
+          <UnmarkMembersDialog
+            open={unmarkMembersDialogOpen}
+            handleClose={() => setUnmarkMembersDialogOpen(false)}
+            refetchMembers={() => {
+              members.refetch().catch(() => null);
+            }}
+            selectedMembersCount={selectedMembersIndex.length}
+            services={services.data?.value ?? []}
+            handleUnmarkingMembers={handleUnmarkingMembers}
+            mutation={unmarkMembersMut}
+          />
+        )}
         <DataGrid
           sx={{ height: "fit-content" }}
           onRowSelectionModelChange={(selection) =>
