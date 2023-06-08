@@ -1,9 +1,16 @@
-import { Button, Toolbar } from "@mui/material";
+import { Button, ListItemText, MenuItem, Toolbar } from "@mui/material";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useMemo, useState, type MouseEvent } from "react";
 import { api } from "@/utils/api";
-import { DataGrid, GridToolbar, type GridColDef } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridToolbar,
+  type GridColDef,
+  GridColumnMenuProps,
+  GridColumnMenu,
+  GridColumnMenuItemProps,
+} from "@mui/x-data-grid";
 import { HeaderWithLogo } from "@/components/logo";
 import {
   useAddMember,
@@ -12,6 +19,7 @@ import {
 } from "@/hooks/home-hooks";
 import { TempBackDrop } from "@/components/backdrop";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 const AddMemberDialog = dynamic(
   () =>
     import("@/components/fullscreen-dialog").then((mod) => mod.AddMemberDialog),
@@ -44,6 +52,41 @@ const MoreMemberInfo = dynamic(
   () => import("@/components/more-info").then((mod) => mod.MoreMemberInfo),
   { loading: ({ isLoading }) => <TempBackDrop open={isLoading ?? false} /> }
 );
+
+const ServiceInfoItem = (
+  props: GridColumnMenuItemProps & { serviceDate: string }
+) => {
+  let { serviceDate } = props;
+  serviceDate = serviceDate.split("/").join("-");
+  return (
+    <Link href={`/service/${serviceDate}`}>
+      <MenuItem>
+        <ListItemText>{props.customValue}</ListItemText>
+      </MenuItem>
+    </Link>
+  );
+};
+
+const CustomColMenu = (props: GridColumnMenuProps) => {
+  if (props.colDef.field?.includes("service")) {
+    const name = props.colDef.headerName;
+    return (
+      <GridColumnMenu
+        {...props}
+        slots={{ columnMenuUserItem: ServiceInfoItem }}
+        slotProps={{
+          columnMenuUserItem: {
+            displayOrder: 0,
+            customValue: "Service Info",
+            serviceDate: name,
+          },
+        }}
+      />
+    );
+  } else {
+    return <GridColumnMenu {...props} />;
+  }
+};
 
 const Home: NextPage = () => {
   const members = api.member.get.useQuery({});
@@ -200,7 +243,7 @@ const Home: NextPage = () => {
           onRowSelectionModelChange={(selection) =>
             setSelectedMembersIndex(selection as number[])
           }
-          slots={{ toolbar: GridToolbar }}
+          slots={{ toolbar: GridToolbar, columnMenu: CustomColMenu }}
           initialState={{
             pagination: { paginationModel: { page: 0, pageSize: 30 } },
           }}
