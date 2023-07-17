@@ -1,4 +1,4 @@
-import { Button, ListItemText, MenuItem, Toolbar } from "@mui/material";
+import { Button, ListItemText, MenuItem } from "@mui/material";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useMemo, useState, type MouseEvent } from "react";
@@ -172,7 +172,6 @@ const Home: NextPage = () => {
       <header>
         <HeaderWithLogo />
       </header>
-      <Toolbar />
       <main>
         <Button
           sx={{ my: 1, mx: 1 }}

@@ -56,7 +56,7 @@ export const HeaderWithLogo = () => {
   const [docsDialogOpen, setDocsDialogOpen] = useState(false);
   return (
     <>
-      <AppBar>
+      <AppBar sx={{ position: "relative" }}>
         <Toolbar sx={{ gap: 2 }}>
           <Image src={rccgLogo} alt="RCCG Logo" width={32} height={32} />
           <Box
