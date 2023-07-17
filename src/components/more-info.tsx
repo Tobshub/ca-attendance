@@ -35,7 +35,9 @@ const Transition = React.forwardRef(function Transition(
 });
 
 interface DisplayMemberInfoProps {
-  memberInfo: NonNullable<MoreMemberInfoProps["memberInfo"]>;
+  memberInfo:
+    | NonNullable<MoreMemberInfoProps["memberInfo"]>
+    | NonNullable<MemberInfoProps["memberInfo"]>;
 }
 
 const DisplayMemberInfo = ({ memberInfo }: DisplayMemberInfoProps) => {
@@ -144,9 +146,11 @@ export const MoreMemberInfo = ({
   const deleteMemberMut = api.member.delete.useMutation({
     onSuccess: (data) => {
       if (data.ok) {
-        refetchMembers().then(() => {
-          localHandleClose();
-        }).catch(() => null)
+        refetchMembers()
+          .then(() => {
+            localHandleClose();
+          })
+          .catch(() => null);
       }
     },
   });
@@ -306,7 +310,241 @@ export const MoreMemberInfo = ({
           button.
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" color="warning" onClick={() => setDeleteMemberDialogOpen(false)}>
+          <Button
+            variant="outlined"
+            color="warning"
+            onClick={() => setDeleteMemberDialogOpen(false)}
+          >
+            CANCEL
+          </Button>
+          <LoadingButton
+            onClick={handleMemberDelete}
+            {...deleteMemberMut}
+            useMutationState={true}
+            color="error"
+            variant="contained"
+          >
+            REMOVE
+          </LoadingButton>
+        </DialogActions>
+      </Dialog>
+    </Dialog>
+  );
+};
+
+interface MemberInfoProps {
+  open: boolean;
+  handleClose: () => void;
+  memberInfo:
+    | {
+        id: number;
+        name: string;
+        phoneNum: string;
+        sex: "MALE" | "FEMALE";
+        address: string | null;
+      }
+    | undefined;
+  refetchMembers: () => Promise<void>;
+}
+
+export const MemberInfo = ({
+  memberInfo,
+  handleClose,
+  open,
+  refetchMembers,
+}: MemberInfoProps) => {
+  const [useMutationState, setUseMutationState] = React.useState(false);
+  const localHandleClose = () => {
+    setUseMutationState(false);
+    handleClose();
+  };
+
+  const [isEditMode, setIsEditMode] = React.useState(false);
+  const editInfoFormRef = React.useRef<HTMLFormElement>(null);
+  const editMemberMut = api.member.update.useMutation();
+
+  const handleSave = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    if (editInfoFormRef.current && memberInfo) {
+      setUseMutationState(true);
+      const formData = new FormData(editInfoFormRef.current);
+      const data = {
+        name: formData.get("name")?.toString(),
+        address: formData.get("address")?.toString(),
+        phoneNum: formData.get("phoneNum")?.toString(),
+        sex: formData.get("sex")?.toString() as "MALE" | "FEMALE" | undefined,
+      };
+      editMemberMut
+        .mutateAsync({ id: memberInfo.id, data })
+        .then((data) => {
+          if (data.ok && memberInfo) {
+            memberInfo = { ...data.value };
+            refetchMembers().catch(null);
+            setIsEditMode(false);
+          }
+        })
+        .catch(null);
+    }
+  };
+
+  const [deleteMemberDialogOpen, setDeleteMemberDialogOpen] =
+    React.useState(false);
+  const deleteMemberMut = api.member.delete.useMutation({
+    onSuccess: (data) => {
+      if (data.ok) {
+        refetchMembers()
+          .then(() => {
+            localHandleClose();
+          })
+          .catch(null);
+      }
+    },
+  });
+
+  const handleMemberDelete = () => {
+    if (memberInfo) {
+      deleteMemberMut.mutate({ id: memberInfo.id });
+    }
+  };
+
+  if (!memberInfo) {
+    return null;
+  }
+
+  return (
+    <Dialog
+      keepMounted={false}
+      fullScreen
+      open={open}
+      onClose={localHandleClose}
+      TransitionComponent={Transition}
+      sx={{ maxWidth: 1000, marginInline: "auto" }}
+    >
+      <AppBar sx={{ position: "relative" }}>
+        <Toolbar sx={{ display: "flex", flexWrap: "wrap" }}>
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={localHandleClose}
+            aria-label="close"
+          >
+            <CloseIcon />
+          </IconButton>
+          <Typography
+            sx={{ ml: 2, flex: 1, minWidth: "fit-content" }}
+            variant="h6"
+            component="div"
+          >
+            Member Info
+          </Typography>
+          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+            {isEditMode ? (
+              <>
+                <LoadingButton
+                  color="success"
+                  variant="contained"
+                  useMutationState={useMutationState}
+                  isLoading={editMemberMut.isLoading}
+                  isError={editMemberMut.isError}
+                  isSuccess={editMemberMut.isSuccess}
+                  sx={{ m: 0 }}
+                  onClick={handleSave}
+                >
+                  SAVE
+                </LoadingButton>
+                <Button
+                  color="error"
+                  variant="contained"
+                  onClick={() => setIsEditMode(false)}
+                >
+                  CANCEL
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  onClick={() => setIsEditMode(true)}
+                  color="info"
+                  variant="contained"
+                >
+                  EDIT
+                </Button>
+                <IconButton
+                  color="error"
+                  onClick={() => setDeleteMemberDialogOpen(true)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </>
+            )}
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <Container
+        sx={{
+          mt: 4,
+          display: "flex",
+          gap: 3,
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-around",
+        }}
+      >
+        {isEditMode ? (
+          <form
+            style={{
+              display: "flex",
+              gap: "1rem",
+              flexDirection: "column",
+              alignItems: "flex-start",
+            }}
+            ref={editInfoFormRef}
+            onSubmit={handleSave}
+          >
+            <TextField
+              label="Full Name"
+              name="name"
+              defaultValue={memberInfo.name}
+            />
+            <FormControl sx={{ minWidth: 80 }}>
+              <InputLabel>Sex</InputLabel>
+              <Select label="Sex" name="sex" defaultValue={memberInfo.sex}>
+                <MenuItem value="MALE">Male</MenuItem>
+                <MenuItem value="FEMALE">Female</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField
+              label="Phone No."
+              name="phoneNum"
+              defaultValue={memberInfo.phoneNum}
+            />
+            <TextField
+              multiline
+              label="Address"
+              name="address"
+              defaultValue={memberInfo.address}
+            />
+          </form>
+        ) : (
+          <DisplayMemberInfo memberInfo={memberInfo} />
+        )}
+      </Container>
+      <Dialog
+        open={deleteMemberDialogOpen}
+        onClose={() => setDeleteMemberDialogOpen(false)}
+      >
+        <DialogTitle>Remove Member</DialogTitle>
+        <DialogContent>
+          You are attempting to remove {memberInfo.name} as a member.
+          <br /> If you are sure, tap the confirm <strong>CONFIRM</strong>{" "}
+          button.
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="outlined"
+            color="warning"
+            onClick={() => setDeleteMemberDialogOpen(false)}
+          >
             CANCEL
           </Button>
           <LoadingButton
