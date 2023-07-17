@@ -13,13 +13,26 @@ export const GetOneService = privateProcedure
     }
     try {
       let service;
+      const includeStatement = {
+        present: {
+          select: {
+            id: true,
+            phoneNum: true,
+            sex: true,
+            name: true,
+            address: true,
+          },
+        },
+      };
       if (input.id) {
         service = await prisma.service.findUnique({
           where: { id: input.id },
+          include: includeStatement,
         });
       } else if (input.date) {
         service = await prisma.service.findUnique({
           where: { date: input.date },
+          include: includeStatement,
         });
       }
 
