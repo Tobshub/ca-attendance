@@ -246,7 +246,7 @@ const Home: NextPage = () => {
           />
         )}
         <DataGrid
-          sx={{ height: "fit-content" }}
+          sx={{ maxHeight: 500 }}
           onRowSelectionModelChange={(selection) =>
             setSelectedMembersIndex(selection as number[])
           }
