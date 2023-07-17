@@ -121,7 +121,7 @@ const Home: NextPage = () => {
   const COLUMNS: GridColDef[] = useMemo(
     () => [
       { field: "id", headerName: "N/O", },
-      { field: "name", headerName: "Name", minWidth: 230, sortable: false },
+      { field: "name", headerName: "Name", minWidth: 230  },
       {
         field: "sex",
         headerName: "Sex",
