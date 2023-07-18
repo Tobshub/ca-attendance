@@ -12,6 +12,7 @@ export const GetServices = privateProcedure
         orderBy: { date: "desc" },
         take: input.limit ?? 5,
         cursor: input.cursor ? { id: input.cursor } : undefined,
+        include: { present: { select: { _count: true } } },
       });
 
       logger.info("Fetched services");
