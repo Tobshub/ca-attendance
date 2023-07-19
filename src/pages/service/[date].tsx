@@ -41,8 +41,8 @@ const ServicePage: NextPage = () => {
 
   return (
     <>
-      <header>
-        <AppBar>
+      <header style={{ position: "relative" }}>
+        <AppBar position="absolute">
           <Toolbar sx={{ gap: "1rem" }}>
             <Button
               color="error"
@@ -59,11 +59,12 @@ const ServicePage: NextPage = () => {
           </Toolbar>
         </AppBar>
       </header>
-      <Toolbar sx={{ mb: "2rem" }} />
+      <Toolbar />
+      <Toolbar />
       <main>
         {service.data?.ok ? (
           <>
-            <em>{service.data.value.date.toLocaleDateString()}</em>
+            <em>{service.data.value.date.toLocaleDateString("en-GB")}</em>
             <h2>Present Members</h2>
             <DataGrid
               sx={{ height: "fit-content" }}

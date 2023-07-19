@@ -203,6 +203,9 @@ const Home: NextPage = () => {
         >
           MARK SELECTED AS ABSENT
         </Button>
+        <Link href="/service">
+          <Button>VIEW ALL SERVICES</Button>
+        </Link>
         {addMemberDialogOpen && (
           <AddMemberDialog
             open={addMemberDialogOpen}
